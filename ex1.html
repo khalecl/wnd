@@ -6,248 +6,50 @@
     <title>Wind Resource Assessment Training Quiz</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        
-        .header {
-            background: linear-gradient(45deg, #2196F3, #21CBF3);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .header p {
-            font-size: 1.2em;
-            opacity: 0.9;
-        }
-        
-        .content {
-            padding: 30px;
-        }
-        
-        .form-group {
-            margin-bottom: 25px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #333;
-            font-size: 1.1em;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #2196F3;
-            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
-        }
-        
-        .question {
-            background: #f8f9fa;
-            padding: 25px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            border-left: 5px solid #2196F3;
-        }
-        
-        .question h3 {
-            margin-bottom: 15px;
-            color: #333;
-            font-size: 1.2em;
-            line-height: 1.4;
-        }
-        
-        .options {
-            display: grid;
-            gap: 12px;
-        }
-        
-        .option {
-            display: flex;
-            align-items: flex-start;
-            padding: 12px;
-            background: white;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .option:hover {
-            border-color: #2196F3;
-            background: #f0f8ff;
-        }
-        
-        .option input[type="radio"] {
-            margin-right: 12px;
-            margin-top: 3px;
-            transform: scale(1.2);
-        }
-        
-        .option label {
-            line-height: 1.4;
-            cursor: pointer;
-        }
-        
-        .option.correct {
-            border-color: #4CAF50;
-            background: #e8f5e8;
-        }
-        
-        .option.incorrect {
-            border-color: #f44336;
-            background: #ffeaea;
-        }
-        
-        .btn {
-            background: linear-gradient(45deg, #2196F3, #21CBF3);
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: transform 0.3s;
-            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
-            margin-right: 10px;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
-        }
-        
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .results {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 10px;
-            margin-top: 20px;
-            text-align: center;
-        }
-        
-        .score {
-            font-size: 3em;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Arial', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(45deg, #2196F3, #21CBF3); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        .content { padding: 30px; }
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; font-size: 1.1em; }
+        .form-group input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; transition: border-color 0.3s; }
+        .form-group input:focus { outline: none; border-color: #2196F3; box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1); }
+        .question { background: #f8f9fa; padding: 25px; margin-bottom: 20px; border-radius: 10px; border-left: 5px solid #2196F3; }
+        .question h3 { margin-bottom: 15px; color: #333; font-size: 1.2em; line-height: 1.4; }
+        .options { display: grid; gap: 12px; }
+        .option { display: flex; align-items: flex-start; padding: 12px; background: white; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+        .option:hover { border-color: #2196F3; background: #f0f8ff; }
+        .option input[type="radio"] { margin-right: 12px; margin-top: 3px; transform: scale(1.2); }
+        .option label { line-height: 1.4; cursor: pointer; }
+        .option.correct { border-color: #4CAF50; background: #e8f5e8; }
+        .option.incorrect { border-color: #f44336; background: #ffeaea; }
+        .btn { background: linear-gradient(45deg, #2196F3, #21CBF3); color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; transition: transform 0.3s; box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3); margin-right: 10px; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .results { background: #f8f9fa; padding: 30px; border-radius: 10px; margin-top: 20px; text-align: center; }
+        .score { font-size: 3em; font-weight: bold; margin-bottom: 15px; }
         .score.excellent { color: #4CAF50; }
         .score.good { color: #2196F3; }
         .score.needs-improvement { color: #FF9800; }
         .score.poor { color: #f44336; }
-        
-        .explanation {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-            text-align: left;
-        }
-        
-        .explanation h4 {
-            color: #856404;
-            margin-bottom: 10px;
-        }
-        
-        .explanation p {
-            color: #856404;
-            line-height: 1.5;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #e0e0e0;
-            border-radius: 4px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(45deg, #2196F3, #21CBF3);
-            transition: width 0.5s ease;
-        }
-        
-        .quiz-info {
-            background: #e3f2fd;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                margin: 10px;
-                border-radius: 10px;
-            }
-            
-            .header {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-            
-            .content {
-                padding: 20px;
-            }
-        }
+        .explanation { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin-top: 15px; text-align: left; }
+        .explanation h4 { color: #856404; margin-bottom: 10px; }
+        .explanation p { color: #856404; line-height: 1.5; }
+        .hidden { display: none; }
+        .progress-bar { width: 100%; height: 8px; background: #e0e0e0; border-radius: 4px; margin: 20px 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(45deg, #2196F3, #21CBF3); transition: width 0.5s ease; }
+        .quiz-info { background: #e3f2fd; padding: 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; }
+        @media (max-width: 600px) { .container { margin: 10px; border-radius: 10px; } .header { padding: 20px; } .header h1 { font-size: 2em; } .content { padding: 20px; } }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Wind Resource Assessment</h1>
-            <p>MENA Regional Focus - Comprehensive Training Quiz</p>
+            <p>MENA Regional Focus - Complete Training Quiz</p>
         </div>
         
         <div class="content">
@@ -293,20 +95,29 @@
 
     <script>
         const questions = [
+            // All 52 questions from the training document
+            
             // Section 1: Opening & Objectives (4 questions)
             {
                 question: "What is the typical NPV impact of a 0.1 m/s wind speed measurement error on a 100 MW project over 20 years in MENA?",
-                options: [
-                    "$0.5-2M NPV impact",
-                    "$2-8M NPV impact", 
-                    "$10-15M NPV impact",
-                    "$20-25M NPV impact"
-                ],
+                options: ["$0.5-2M NPV impact", "$2-8M NPV impact", "$10-15M NPV impact", "$20-25M NPV impact"],
                 correct: 1,
                 explanation: "According to the training, 0.1 m/s wind speed error = 2-4% energy loss = $2-8M NPV impact over 20 years for a 100 MW project, with high LCOE sensitivity due to MENA financing costs."
             },
             {
-                question: "What are the five learning objectives covered in this wind resource assessment training?",
+                question: "What temperature range must equipment withstand in MENA conditions?",
+                options: ["-20°C to +40°C", "-30°C to +50°C", "-5°C to +55°C", "-10°C to +45°C"],
+                correct: 2,
+                explanation: "MENA operational conditions require equipment to withstand extreme temperature variations from -5°C to +55°C, as demonstrated by projects like Shagaya Wind Farm in Kuwait."
+            },
+            {
+                question: "Which country leads MENA in total installed wind capacity as of 2024-2025?",
+                options: ["Morocco (1.4 GW)", "Egypt (1.6 GW)", "Jordan (0.9 GW)", "UAE (0.8 GW)"],
+                correct: 1,
+                explanation: "Egypt leads with 1.6 GW installed capacity, followed by Morocco (1.4 GW) and Jordan (0.9 GW), with emerging markets in Saudi Arabia and UAE."
+            },
+            {
+                question: "What are the five learning objectives of this training?",
                 options: [
                     "Technology selection, distribution analysis, bias correction, uncertainty quantification, compliance development",
                     "Site selection, equipment installation, data analysis, reporting, financing",
@@ -316,82 +127,35 @@
                 correct: 0,
                 explanation: "The five objectives are: 1) Select optimal measurement technology, 2) Calculate Weibull parameters, 3) Apply bias correction methods, 4) Quantify P50/P90 uncertainties, 5) Develop compliant measurement campaigns."
             },
-            {
-                question: "What temperature range must equipment withstand in MENA conditions?",
-                options: [
-                    "-20°C to +40°C",
-                    "-30°C to +50°C",
-                    "-5°C to +55°C",
-                    "-10°C to +45°C"
-                ],
-                correct: 2,
-                explanation: "MENA operational conditions require equipment to withstand extreme temperature variations from -5°C to +55°C, as demonstrated by projects like Shagaya Wind Farm in Kuwait."
-            },
-            {
-                question: "Which country leads MENA in total installed wind capacity as of 2024-2025?",
-                options: [
-                    "Morocco (1.4 GW)",
-                    "Egypt (1.6 GW)",
-                    "Jordan (0.9 GW)",
-                    "UAE (0.8 GW)"
-                ],
-                correct: 1,
-                explanation: "Egypt leads with 1.6 GW installed capacity, followed by Morocco (1.4 GW) and Jordan (0.9 GW), with emerging markets in Saudi Arabia and UAE."
-            },
             
             // Section 2: Met Mast vs LiDAR Technology (13 questions)
             {
                 question: "What is the typical measurement uncertainty for a met mast at 120m height?",
-                options: [
-                    "±1.0% wind speed uncertainty",
-                    "±1.5% wind speed uncertainty",
-                    "±2.0% wind speed uncertainty", 
-                    "±2.5% wind speed uncertainty"
-                ],
+                options: ["±1.0% wind speed uncertainty", "±1.5% wind speed uncertainty", "±2.0% wind speed uncertainty", "±2.5% wind speed uncertainty"],
                 correct: 1,
                 explanation: "Met mast at 120m typically achieves ±1.5% wind speed uncertainty, compared to ±2.0% for nacelle LiDAR and ±2.5% for ground-based LiDAR at 180m."
             },
             {
                 question: "According to IEC 61400-50-1, what is the required anemometer accuracy class?",
-                options: [
-                    "Class 2: ±0.2 m/s",
-                    "Class 1: ±0.1 m/s",
-                    "Class 0.5: ±0.05 m/s",
-                    "Any certified class"
-                ],
+                options: ["Class 2: ±0.2 m/s", "Class 1: ±0.1 m/s", "Class 0.5: ±0.05 m/s", "Any certified class"],
                 correct: 1,
                 explanation: "IEC 61400-50-1 requires Class 1 anemometers with ±0.1 m/s accuracy for compliance, along with annual calibration and proper boom length specifications."
             },
             {
                 question: "What boom length is required relative to mast diameter per IEC standards?",
-                options: [
-                    "1.5 × mast diameter",
-                    "2.0 × mast diameter", 
-                    "2.5 × mast diameter",
-                    "3.0 × mast diameter"
-                ],
+                options: ["1.5 × mast diameter", "2.0 × mast diameter", "2.5 × mast diameter", "3.0 × mast diameter"],
                 correct: 2,
                 explanation: "IEC 61400-50-1 specifies boom length must be 2.5 × mast diameter to minimize flow distortion and ensure measurement accuracy."
             },
             {
                 question: "What is the minimum data recovery requirement for annual measurements?",
-                options: [
-                    ">90% annually",
-                    ">92% annually",
-                    ">95% annually", 
-                    ">98% annually"
-                ],
+                options: [">90% annually", ">92% annually", ">95% annually", ">98% annually"],
                 correct: 2,
                 explanation: "IEC standards require >95% annual data recovery to ensure statistical validity and banking acceptance of measurement campaigns."
             },
             {
                 question: "For LiDAR systems per IEC 61400-50-2, what is the required range gate resolution?",
-                options: [
-                    "≤10m",
-                    "≤15m",
-                    "≤20m",
-                    "≤25m"
-                ],
+                options: ["≤10m", "≤15m", "≤20m", "≤25m"],
                 correct: 2,
                 explanation: "IEC 61400-50-2 requires LiDAR range gate resolution ≤20m for proper vertical wind profile characterization and compliance."
             },
@@ -408,317 +172,574 @@
             },
             {
                 question: "How many dust storm events does Shagaya Wind Farm experience annually?",
-                options: [
-                    "5-10 events",
-                    "10-15 events", 
-                    "15-20 events",
-                    "20-25 events"
-                ],
+                options: ["5-10 events", "10-15 events", "15-20 events", "20-25 events"],
                 correct: 2,
                 explanation: "Shagaya experiences 15-20 dust storm events annually, demonstrating the challenging operational environment while maintaining >92% equipment availability."
             },
             {
                 question: "What is the 2-year total cost for a 120m met mast campaign including O&M?",
-                options: [
-                    "$146,000",
-                    "$166,000",
-                    "$186,000",
-                    "$206,000"
-                ],
+                options: ["$146,000", "$166,000", "$186,000", "$206,000"],
                 correct: 1,
                 explanation: "Total 2-year cost: $85,000 equipment + $45,000 installation + $36,000 O&M (2×$18,000) = $166,000 for 120m met mast."
             },
             {
                 question: "At what project size threshold does LiDAR premium typically become justified?",
-                options: [
-                    ">30 MW",
-                    ">50 MW",
-                    ">75 MW", 
-                    ">100 MW"
-                ],
+                options: [">30 MW", ">50 MW", ">75 MW", ">100 MW"],
                 correct: 1,
                 explanation: "Projects >50 MW typically justify LiDAR premium due to improved spatial coverage and reduced uncertainty benefits outweighing higher costs."
             },
             {
                 question: "What IP rating is essential for MENA sand/dust protection?",
-                options: [
-                    "IP54",
-                    "IP65", 
-                    "IP67",
-                    "IP68"
-                ],
+                options: ["IP54", "IP65", "IP67", "IP68"],
                 correct: 1,
                 explanation: "IP65 minimum rating is essential for MENA conditions, with IP6X providing complete dust ingress protection critical for desert environments."
             },
             {
-                question: "What is the typical power consumption difference between met mast and ground LiDAR?",
-                options: [
-                    "Met mast 50W vs Ground LiDAR 150W",
-                    "Met mast 50W vs Ground LiDAR 250W",
-                    "Met mast 100W vs Ground LiDAR 200W",
-                    "Met mast 75W vs Ground LiDAR 300W"
-                ],
+                question: "What is the typical power consumption for ground LiDAR vs met mast?",
+                options: ["LiDAR 150W vs Met mast 50W", "LiDAR 250W vs Met mast 50W", "LiDAR 200W vs Met mast 100W", "LiDAR 300W vs Met mast 75W"],
                 correct: 1,
                 explanation: "Met mast typically consumes 50W while ground LiDAR consumes 250W, requiring larger power supply systems for remote installations."
             },
             {
-                question: "According to the decision matrix, what is the highest weighted criterion for technology selection?",
-                options: [
-                    "Cost (2-year campaign)",
-                    "Accuracy",
-                    "Environmental robustness", 
-                    "Banking acceptance"
-                ],
+                question: "According to the decision matrix, what receives the highest weighting for technology selection?",
+                options: ["Cost (2-year campaign)", "Accuracy", "Environmental robustness", "Banking acceptance"],
                 correct: 1,
                 explanation: "Accuracy receives the highest weighting at 25%, followed by environmental robustness at 20%, reflecting the critical importance of measurement quality."
             },
             {
                 question: "What is the recommended measurement sector coverage per IEC 61400-12-1?",
-                options: [
-                    "180° minimum",
-                    "240° minimum",
-                    "270° minimum",
-                    "360° required"
-                ],
+                options: ["180° minimum", "240° minimum", "270° minimum", "360° required"],
                 correct: 2,
                 explanation: "IEC 61400-12-1 requires 270° minimum measurement sector (±45° from prevailing wind) for valid power performance assessment."
             },
-            
+
             // Section 3: Statistical Analysis Methods (8 questions)
             {
                 question: "In the Weibull distribution, what does a shape parameter k<2 indicate?",
-                options: [
-                    "Very consistent wind speeds", 
-                    "High variability, gusty conditions",
-                    "Average wind conditions",
-                    "Measurement error"
-                ],
+                options: ["Very consistent wind speeds", "High variability, gusty conditions", "Average wind conditions", "Measurement error"],
                 correct: 1,
                 explanation: "Shape parameter k<2 indicates high variability and gusty conditions, k=2 is Rayleigh distribution, and k>2 indicates more consistent wind speeds."
             },
             {
                 question: "What are typical k-values for MENA desert interior sites?",
-                options: [
-                    "1.5-2.0",
-                    "1.8-2.2", 
-                    "2.2-2.8",
-                    "2.8-3.2"
-                ],
+                options: ["1.5-2.0", "1.8-2.2", "2.2-2.8", "2.8-3.2"],
                 correct: 2,
                 explanation: "Desert interior sites (Saudi Arabia, Interior UAE) typically have k-values of 2.2-2.8, representing more consistent wind speeds due to Shamal winds and less thermal turbulence."
             },
             {
                 question: "For coastal Arabian Gulf sites, what are typical k-values?",
-                options: [
-                    "1.5-2.0",
-                    "1.8-2.2",
-                    "2.2-2.8",
-                    "2.8-3.2"
-                ],
+                options: ["1.5-2.0", "1.8-2.2", "2.2-2.8", "2.8-3.2"],
                 correct: 1,
                 explanation: "Coastal Arabian Gulf sites (UAE, Qatar, Kuwait) have k-values of 1.8-2.2 due to thermal effects and strong diurnal cycling from sea-land interactions."
             },
             {
                 question: "What is the relationship between scale parameter c and mean wind speed for Rayleigh distribution (k=2)?",
-                options: [
-                    "c ≈ 0.89 × mean wind speed",
-                    "c ≈ 1.13 × mean wind speed",
-                    "c ≈ 1.27 × mean wind speed", 
-                    "c ≈ 1.41 × mean wind speed"
-                ],
+                options: ["c ≈ 0.89 × mean wind speed", "c ≈ 1.13 × mean wind speed", "c ≈ 1.27 × mean wind speed", "c ≈ 1.41 × mean wind speed"],
                 correct: 1,
                 explanation: "For Rayleigh distribution (k=2), the scale parameter c ≈ 1.13 × mean wind speed, which is used as an initial estimate in MLE calculations."
             },
             {
-                question: "In Maximum Likelihood Estimation for Weibull parameters, what is the convergence criteria typically used?",
-                options: [
-                    "|k(n+1) - k(n)| < 0.01",
-                    "|k(n+1) - k(n)| < 0.001", 
-                    "|k(n+1) - k(n)| < 0.0001",
-                    "|k(n+1) - k(n)| < 0.1"
-                ],
+                question: "In Maximum Likelihood Estimation, what is the typical convergence criteria?",
+                options: ["|k(n+1) - k(n)| < 0.01", "|k(n+1) - k(n)| < 0.001", "|k(n+1) - k(n)| < 0.0001", "|k(n+1) - k(n)| < 0.1"],
                 correct: 1,
                 explanation: "MLE convergence criteria is typically |k(n+1) - k(n)| < 0.001 to ensure accurate parameter estimation through Newton-Raphson iteration."
             },
             {
-                question: "What wind speed threshold is typically used to remove calm periods in Weibull analysis?",
-                options: [
-                    "v < 0.3 m/s",
-                    "v < 0.5 m/s",
-                    "v < 1.0 m/s",
-                    "v < 1.5 m/s"
-                ],
+                question: "What wind speed threshold is used to remove calm periods in Weibull analysis?",
+                options: ["v < 0.3 m/s", "v < 0.5 m/s", "v < 1.0 m/s", "v < 1.5 m/s"],
                 correct: 1,
                 explanation: "Wind speeds v < 0.5 m/s are typically removed as calm periods since they don't contribute to energy production and can skew distribution fitting."
             },
             {
                 question: "For Shagaya case study at 80m height, what were the final converged Weibull parameters?",
-                options: [
-                    "k = 2.08, c = 9.05 m/s",
-                    "k = 2.11, c = 9.07 m/s", 
-                    "k = 2.15, c = 9.10 m/s",
-                    "k = 2.20, c = 9.15 m/s"
-                ],
+                options: ["k = 2.08, c = 9.05 m/s", "k = 2.11, c = 9.07 m/s", "k = 2.15, c = 9.10 m/s", "k = 2.20, c = 9.15 m/s"],
                 correct: 1,
                 explanation: "The Shagaya example converged to k = 2.11, c = 9.07 m/s after 3 MLE iterations, representing typical desert interior wind characteristics."
             },
             {
                 question: "What energy density range is typical for desert interior MENA sites at 100m?",
-                options: [
-                    "200-400 W/m²",
-                    "300-600 W/m²",
-                    "400-800 W/m²",
-                    "500-900 W/m²"
-                ],
+                options: ["200-400 W/m²", "300-600 W/m²", "400-800 W/m²", "500-900 W/m²"],
                 correct: 1,
                 explanation: "Desert interior sites typically achieve 300-600 W/m² energy density at 100m, higher than coastal sites (200-400 W/m²) due to consistent wind patterns."
             },
-            
-            // Section 4: Regional Data Applications (9 questions)
+
+            // Section 4: Regional Data Applications (9 questions)  
             {
                 question: "What is ERA5's spatial resolution?",
-                options: [
-                    "25 km (0.25° × 0.25°)",
-                    "31 km (0.28° × 0.28°)",
-                    "40 km (0.35° × 0.35°)", 
-                    "55 km (0.5° × 0.5°)"
-                ],
+                options: ["25 km (0.25° × 0.25°)", "31 km (0.28° × 0.28°)", "40 km (0.35° × 0.35°)", "55 km (0.5° × 0.5°)"],
                 correct: 1,
                 explanation: "ERA5 has 31 km spatial resolution (0.28° × 0.28°) with hourly temporal resolution, providing higher resolution than MERRA-2's 55 km grid."
             },
             {
                 question: "What is MERRA-2's spatial resolution?",
-                options: [
-                    "31 km (0.28° × 0.28°)",
-                    "45 km (0.45° × 0.45°)",
-                    "55 km (0.625° × 0.5°)",
-                    "65 km (0.65° × 0.65°)"
-                ],
+                options: ["31 km (0.28° × 0.28°)", "45 km (0.45° × 0.45°)", "55 km (0.625° × 0.5°)", "65 km (0.65° × 0.65°)"],
                 correct: 2,
                 explanation: "MERRA-2 has 55 km spatial resolution (0.625° × 0.5°) with hourly temporal resolution and better aerosol representation than ERA5."
             },
             {
-                question: "Which reanalysis dataset better captures Shamal wind intensity in the Arabian Peninsula?",
-                options: [
-                    "MERRA-2 due to aerosol effects",
-                    "ERA5 due to better intensity capture",
-                    "Both perform equally", 
-                    "Neither captures Shamal well"
-                ],
+                question: "Which reanalysis dataset better captures Shamal wind intensity?",
+                options: ["MERRA-2 due to aerosol effects", "ERA5 due to better intensity capture", "Both perform equally", "Neither captures Shamal well"],
                 correct: 1,
                 explanation: "ERA5 better captures Shamal wind intensity in the Arabian Peninsula, despite MERRA-2's advantages in aerosol representation and dust storm effects."
             },
             {
-                question: "In linear regression bias correction (v_corrected = a·v_reanalysis + b), what do coefficients a and b represent?",
-                options: [
-                    "a = intercept, b = slope",
-                    "a = slope, b = intercept", 
-                    "Both represent scaling factors",
-                    "Both represent offset corrections"
-                ],
+                question: "In linear regression bias correction (v_corrected = a·v_reanalysis + b), what do coefficients represent?",
+                options: ["a = intercept, b = slope", "a = slope, b = intercept", "Both represent scaling factors", "Both represent offset corrections"],
                 correct: 1,
                 explanation: "Coefficient a (slope) = σ(observed)/σ(reanalysis), coefficient b (intercept) = v̄(observed) - a·v̄(reanalysis) for linear bias correction."
             },
             {
-                question: "What is the typical regression uncertainty in bias correction methods for MENA?",
-                options: [
-                    "±0.1 m/s",
-                    "±0.2 m/s",
-                    "±0.3 m/s", 
-                    "±0.5 m/s"
-                ],
+                question: "What is typical regression uncertainty in bias correction for MENA?",
+                options: ["±0.1 m/s", "±0.2 m/s", "±0.3 m/s", "±0.5 m/s"],
                 correct: 1,
                 explanation: "Typical regression uncertainty in MENA bias correction is ±0.2 m/s, which must be included in the overall uncertainty budget for energy assessments."
             },
             {
                 question: "What correlation coefficient indicates excellent correlation for MCP validation?",
-                options: [
-                    "r > 0.75",
-                    "r > 0.80",
-                    "r > 0.85", 
-                    "r > 0.90"
-                ],
+                options: ["r > 0.75", "r > 0.80", "r > 0.85", "r > 0.90"],
                 correct: 2,
                 explanation: "r > 0.85 indicates excellent correlation, r = 0.75-0.85 is good correlation, and r < 0.75 is poor correlation requiring caution in MCP application."
             },
             {
-                question: "Which wind sectors typically show the highest correlation in MENA sites?",
-                options: [
-                    "All sectors equally",
-                    "Prevailing wind sectors (r = 0.85-0.90)",
-                    "Calm sectors (r = 0.90-0.95)",
-                    "Complex terrain sectors (r = 0.80-0.85)"
-                ],
+                question: "Which wind sectors show the highest correlation in MENA sites?",
+                options: ["All sectors equally", "Prevailing wind sectors (r = 0.85-0.90)", "Calm sectors (r = 0.90-0.95)", "Complex terrain sectors (r = 0.80-0.85)"],
                 correct: 1,
                 explanation: "Prevailing wind sectors show highest correlation (r = 0.85-0.90), while calm sectors are lower (r = 0.60-0.75) and complex terrain sectors intermediate (r = 0.70-0.80)."
             },
             {
                 question: "What is typical inter-annual variability (IAV) for coastal MENA sites?",
-                options: [
-                    "3-5%",
-                    "5-8%",
-                    "8-12%", 
-                    "10-15%"
-                ],
+                options: ["3-5%", "5-8%", "8-12%", "10-15%"],
                 correct: 1,
                 explanation: "Coastal sites have IAV = 5-8%, desert interior = 8-12%, complex terrain = 10-15%. Lower IAV indicates more consistent year-to-year wind patterns."
             },
             {
-                question: "What uncertainty reduction is typically achieved by extending from 12-month to 24-month campaigns?",
-                options: [
-                    "±15% to ±12%",
-                    "±15% to ±8%",
-                    "±12% to ±8%", 
-                    "±10% to ±6%"
-                ],
+                question: "What uncertainty reduction is achieved by extending from 12-month to 24-month campaigns?",
+                options: ["±15% to ±12%", "±15% to ±8%", "±12% to ±8%", "±10% to ±6%"],
                 correct: 1,
                 explanation: "Extending from 12-month (±15% uncertainty) to 24-month campaigns (±8% uncertainty) significantly improves representativity assessment."
             },
-            
+
             // Section 5: P50/P90 & Financial Impact (10 questions)
             {
                 question: "What is the combined measurement uncertainty (σ_meas) for typical met mast installations?",
-                options: [
-                    "±0.10 m/s", 
-                    "±0.15 m/s",
-                    "±0.20 m/s",
-                    "±0.25 m/s"
-                ],
+                options: ["±0.10 m/s", "±0.15 m/s", "±0.20 m/s", "±0.25 m/s"],
                 correct: 1,
                 explanation: "Combined measurement uncertainty σ_meas = ±0.15 m/s includes anemometer accuracy (±0.1 m/s), calibration drift (±0.05 m/s), and installation effects (±0.1 m/s)."
             },
             {
                 question: "What is typical long-term correlation uncertainty (σ_MCP) for 12-month campaigns?",
-                options: [
-                    "±0.2 m/s",
-                    "±0.3 m/s",
-                    "±0.4 m/s", 
-                    "±0.5 m/s"
-                ],
+                options: ["±0.2 m/s", "±0.3 m/s", "±0.4 m/s", "±0.5 m/s"],
                 correct: 2,
                 explanation: "σ_MCP = ±0.4 m/s for 12-month campaigns, combining regression uncertainty (±0.2 m/s), temporal stability (±0.1 m/s), reference data quality (±0.1 m/s), and representativity (±0.3 m/s)."
             },
             {
                 question: "What is typical modeling uncertainty (σ_model) for wind resource assessment?",
-                options: [
-                    "±0.4 m/s",
-                    "±0.5 m/s", 
-                    "±0.6 m/s",
-                    "±0.8 m/s"
-                ],
+                options: ["±0.4 m/s", "±0.5 m/s", "±0.6 m/s", "±0.8 m/s"],
                 correct: 2,
                 explanation: "σ_model = ±0.6 m/s combines vertical extrapolation (±0.2 m/s), horizontal extrapolation (±0.3 m/s), terrain complexity (±0.4 m/s), and wake effects (±0.2 m/s)."
             },
             {
                 question: "For the UAE project example with 8.5 m/s hub height wind speed and ±0.9 m/s uncertainty, what is the energy uncertainty using the 3× multiplier rule?",
-                options: [
-                    "±28%",
-                    "±32%", 
-                    "±36%",
-                    "±40%"
-                ],
+                options: ["±28%", "±32%", "±36%", "±40%"],
                 correct: 1,
                 explanation: "Energy uncertainty ≈ 3 × (Δv/v) = 3 × (0.9/8.5) = 3 × 10.6% = ±32% (1-sigma), leading to P50/P90 range of +20%/-28%."
             },
             {
-                question: "
+                question: "What is the minimum DSCR requirement for commercial banks at P50?",
+                options: ["1.25", "1.30", "1.35", "1.40"],
+                correct: 2,
+                explanation: "Commercial banks require minimum DSCR of 1.35 at P50 and 1.20 at P90, with maximum debt/equity ratio of 70:30 for wind projects."
+            },
+            {
+                question: "In the 200 MW MENA project example, what was the equity requirement increase due to P90 constraints?",
+                options: ["$24M (+35%)", "$30M (+42%)", "$34M (+47%)", "$40M (+55%)"],
+                correct: 2,
+                explanation: "P50 debt capacity $168M vs P90 debt capacity $134M resulted in $34M additional equity requirement (+47%) due to reduced debt capacity."
+            },
+            {
+                question: "For normal distribution, what is the relationship between P50 and P90?",
+                options: ["P90 = P50 - (1.64 × σ_total)", "P90 = P50 - (1.28 × σ_total)", "P90 = P50 - (1.96 × σ_total)", "P90 = P50 - (2.33 × σ_total)"],
+                correct: 1,
+                explanation: "P90 = P50 - (1.28 × σ_total) where 1.28 is the coverage factor for 90% exceedance probability in normal distribution."
+            },
+            {
+                question: "What confidence level does a coverage factor k=1.96 represent?",
+                options: ["90% confidence", "95% confidence", "99% confidence", "68% confidence"],
+                correct: 1,
+                explanation: "Coverage factor k=1.96 represents 95% confidence level, while k=1.64 is 90%, k=1.28 is P90 calculation, and k=2.58 is 99%."
+            },
+            {
+                question: "What is the ROI on measurement quality improvement investment?",
+                options: ["5-10x investment", "10-20x investment", "20-30x investment", "30-40x investment"],
+                correct: 1,
+                explanation: "ROI on measurement quality is typically 10-20x investment, as 5% uncertainty reduction can save $10-20M equity while campaign extension costs only $0.5-1.5M."
+            },
+            {
+                question: "What is typical total uncertainty for complex terrain MENA sites?",
+                options: ["±0.8 m/s", "±1.0 m/s", "±1.3 m/s", "±1.5 m/s"],
+                correct: 2,
+                explanation: "Complex terrain sites in MENA typically have ±1.3 m/s total uncertainty, compared to ±0.8 m/s for simple desert sites and ±1.0 m/s for coastal locations."
+            },
+
+            // Section 6: Standards Compliance (8 questions)
+            {
+                question: "According to IEC 61400-12-1, what is the terrain complexity requirement for full standard application?",
+                options: ["<0.05", "<0.1", "<0.15", "<0.2"],
+                correct: 1,
+                explanation: "IEC 61400-12-1 requires terrain complexity <0.1 for simple terrain sites suitable for full standard application without site calibration requirements."
+            },
+            {
+                question: "What is the required distance to obstacles per IEC 61400-12-1?",
+                options: [">1.5× obstacle height", ">2× obstacle height", ">2.5× obstacle height", ">3× obstacle height"],
+                correct: 1,
+                explanation: "IEC 61400-12-1 requires measurement distance >2× obstacle height to minimize flow distortion effects on power performance testing."
+            },
+            {
+                question: "What is the minimum number of measurement points per bin for valid analysis?",
+                options: ["20 measurements", "30 measurements", "40 measurements", "50 measurements"],
+                correct: 1,
+                explanation: "IEC 61400-12-1 requires minimum 30 measurements per bin to ensure statistical validity in power curve analysis and energy assessment."
+            },
+            {
+                question: "What is the recommended bin width for wind speed analysis per IEC standards?",
+                options: ["0.3 m/s", "0.5 m/s", "0.7 m/s", "1.0 m/s"],
+                correct: 1,
+                explanation: "IEC standards recommend 0.5 m/s bin width for wind speed analysis to balance statistical resolution with adequate sample sizes per bin."
+            },
+            {
+                question: "What is the minimum measurement campaign duration required by most banks?",
+                options: ["6 months continuous", "12 months continuous", "18 months continuous", "24 months continuous"],
+                correct: 1,
+                explanation: "Most banks require minimum 12 months continuous measurement campaign, though 24-36 months is preferred for reduced uncertainty and better representativity."
+            },
+            {
+                question: "What total energy uncertainty threshold is typically required for banking acceptance?",
+                options: ["<8% (1-sigma)", "<10% (1-sigma)", "<12% (1-sigma)", "<15% (1-sigma)"],
+                correct: 1,
+                explanation: "Banks typically require total energy uncertainty <10% (1-sigma) for financing approval, with some requiring <8% for complex projects or stringent lending criteria."
+            },
+            {
+                question: "What P90/P50 ratio is typically required by banks for project financing?",
+                options: [">0.75", ">0.80", ">0.85", ">0.90"],
+                correct: 1,
+                explanation: "Banks typically require P90/P50 ratio >0.80 for project financing, meaning P90 energy should be at least 80% of P50 energy estimates."
+            },
+            {
+                question: "According to Equator Principles (EP4), what is mandatory for project financing?",
+                options: [
+                    "Independent engineer review and IEC compliance",
+                    "Environmental assessment only", 
+                    "Technical due diligence only",
+                    "Financial modeling only"
+                ],
+                correct: 0,
+                explanation: "Equator Principles (EP4) requires independent engineer review, IEC compliance, environmental and social assessment, and technical due diligence standards for project financing."
+            },
+            {
+                question: "What is the most common reason for banking rejection of wind resource assessments?",
+                options: [
+                    "Campaign duration <12 months",
+                    "Poor correlation (r<0.75)", 
+                    "Equipment non-compliance",
+                    "Excessive uncertainty (>12%)"
+                ],
+                correct: 0,
+                explanation: "Campaign duration <12 months is the most common rejection reason, as banks require full seasonal coverage for adequate risk assessment and loan approval."
+            }
+        ];
+
+        let currentAnswers = {};
+        let quizStarted = false;
+
+        function startQuiz() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            
+            if (!firstName || !lastName) {
+                alert('Please enter both first name and last name to start the quiz.');
+                return;
+            }
+            
+            document.getElementById('userInfo').classList.add('hidden');
+            document.getElementById('quizSection').classList.remove('hidden');
+            quizStarted = true;
+            displayQuestions();
+        }
+
+        function displayQuestions() {
+            const container = document.getElementById('questionContainer');
+            container.innerHTML = '';
+            
+            questions.forEach((q, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+                
+                let optionsHtml = '';
+                q.options.forEach((option, optIndex) => {
+                    optionsHtml += `
+                        <div class="option" onclick="selectOption(${index}, ${optIndex})">
+                            <input type="radio" name="question${index}" value="${optIndex}" id="q${index}o${optIndex}">
+                            <label for="q${index}o${optIndex}">${option}</label>
+                        </div>
+                    `;
+                });
+                
+                questionDiv.innerHTML = `
+                    <h3>Question ${index + 1}: ${q.question}</h3>
+                    <div class="options">
+                        ${optionsHtml}
+                    </div>
+                `;
+                
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            currentAnswers[questionIndex] = optionIndex;
+            
+            // Update visual selection
+            const questionDiv = document.querySelectorAll('.question')[questionIndex];
+            const options = questionDiv.querySelectorAll('.option');
+            options.forEach(option => option.style.backgroundColor = 'white');
+            options[optionIndex].style.backgroundColor = '#e3f2fd';
+            
+            // Check radio button
+            document.getElementById(`q${questionIndex}o${optionIndex}`).checked = true;
+            
+            // Update progress
+            updateProgress();
+            
+            // Enable submit button if all questions answered
+            if (Object.keys(currentAnswers).length === questions.length) {
+                document.getElementById('submitBtn').disabled = false;
+            }
+        }
+
+        function updateProgress() {
+            const progress = (Object.keys(currentAnswers).length / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function submitQuiz() {
+            // Calculate score
+            let correctAnswers = 0;
+            questions.forEach((q, index) => {
+                if (currentAnswers[index] === q.correct) {
+                    correctAnswers++;
+                }
+            });
+            
+            const score = (correctAnswers / questions.length) * 100;
+            
+            // Hide quiz section and show results
+            document.getElementById('quizSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+            
+            // Display score
+            displayResults(score, correctAnswers);
+        }
+
+        function displayResults(score, correctAnswers) {
+            const scoreElement = document.getElementById('finalScore');
+            const performanceElement = document.getElementById('performance');
+            const detailedElement = document.getElementById('detailedResults');
+            
+            scoreElement.textContent = Math.round(score) + '%';
+            
+            let performanceClass = '';
+            let performanceText = '';
+            
+            if (score >= 90) {
+                performanceClass = 'excellent';
+                performanceText = 'Excellent! Outstanding knowledge of wind resource assessment.';
+            } else if (score >= 80) {
+                performanceClass = 'good';
+                performanceText = 'Good work! You have a solid understanding of the concepts.';
+            } else if (score >= 70) {
+                performanceClass = 'needs-improvement';
+                performanceText = 'Fair performance. Consider reviewing the training materials.';
+            } else {
+                performanceClass = 'poor';
+                performanceText = 'Additional study recommended. Please review the training content.';
+            }
+            
+            scoreElement.className = 'score ' + performanceClass;
+            performanceElement.innerHTML = `
+                <h3>${performanceText}</h3>
+                <p>You answered ${correctAnswers} out of ${questions.length} questions correctly.</p>
+                <p><strong>Pass Status:</strong> ${score >= 70 ? '✅ PASSED' : '❌ FAILED'}</p>
+            `;
+            
+            // Show detailed explanations
+            let detailedHtml = '<h3>Detailed Review:</h3>';
+            questions.forEach((q, index) => {
+                const userAnswer = currentAnswers[index];
+                const isCorrect = userAnswer === q.correct;
+                
+                detailedHtml += `
+                    <div class="explanation">
+                        <h4>Question ${index + 1}: ${isCorrect ? '✅ Correct' : '❌ Incorrect'}</h4>
+                        <p><strong>Question:</strong> ${q.question}</p>
+                        <p><strong>Your answer:</strong> ${q.options[userAnswer]}</p>
+                        <p><strong>Correct answer:</strong> ${q.options[q.correct]}</p>
+                        <p><strong>Explanation:</strong> ${q.explanation}</p>
+                    </div>
+                `;
+            });
+            
+            detailedElement.innerHTML = detailedHtml;
+        }
+
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF();
+            
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const score = document.getElementById('finalScore').textContent;
+            const date = new Date().toLocaleDateString();
+            let correctAnswers = 0;
+            questions.forEach((q, index) => {
+                if (currentAnswers[index] === q.correct) {
+                    correctAnswers++;
+                }
+            });
+            const passStatus = parseInt(score) >= 70 ? 'PASSED' : 'FAILED';
+            
+            // Header
+            pdf.setFontSize(18);
+            pdf.text('Wind Resource Assessment Quiz Results', 20, 20);
+            
+            pdf.setFontSize(12);
+            pdf.text(`Name: ${firstName} ${lastName}`, 20, 40);
+            pdf.text(`Date: ${date}`, 20, 50);
+            pdf.text(`Score: ${score} (${correctAnswers}/${questions.length})`, 20, 60);
+            pdf.text(`Status: ${passStatus}`, 20, 70);
+            
+            let yPosition = 90;
+            
+            // Section summary
+            const sections = [
+                { name: 'Opening & Objectives', start: 0, count: 4 },
+                { name: 'Met Mast vs LiDAR Technology', start: 4, count: 13 },
+                { name: 'Statistical Analysis Methods', start: 17, count: 8 },
+                { name: 'Regional Data Applications', start: 25, count: 9 },
+                { name: 'P50/P90 & Financial Impact', start: 34, count: 10 },
+                { name: 'Standards Compliance', start: 44, count: 8 }
+            ];
+            
+            pdf.setFontSize(14);
+            pdf.text('Section Performance:', 20, yPosition);
+            yPosition += 15;
+            
+            pdf.setFontSize(10);
+            sections.forEach(section => {
+                let sectionCorrect = 0;
+                for (let i = section.start; i < section.start + section.count; i++) {
+                    if (currentAnswers[i] === questions[i].correct) {
+                        sectionCorrect++;
+                    }
+                }
+                const sectionScore = Math.round((sectionCorrect / section.count) * 100);
+                pdf.text(`${section.name}: ${sectionCorrect}/${section.count} (${sectionScore}%)`, 20, yPosition);
+                yPosition += 8;
+            });
+            
+            yPosition += 10;
+            
+            // Question details
+            pdf.setFontSize(12);
+            pdf.text('Detailed Results:', 20, yPosition);
+            yPosition += 10;
+            
+            questions.forEach((q, index) => {
+                if (yPosition > 250) {
+                    pdf.addPage();
+                    yPosition = 20;
+                }
+                
+                const userAnswer = currentAnswers[index];
+                const isCorrect = userAnswer === q.correct;
+                
+                pdf.setFontSize(9);
+                pdf.text(`Q${index + 1}: ${isCorrect ? 'CORRECT' : 'INCORRECT'}`, 20, yPosition);
+                yPosition += 7;
+                
+                // Question text (wrapped)
+                const questionLines = pdf.splitTextToSize(`${q.question}`, 170);
+                pdf.text(questionLines, 20, yPosition);
+                yPosition += questionLines.length * 5;
+                
+                pdf.text(`Your answer: ${q.options[userAnswer]}`, 20, yPosition);
+                yPosition += 7;
+                
+                if (!isCorrect) {
+                    pdf.text(`Correct answer: ${q.options[q.correct]}`, 20, yPosition);
+                    yPosition += 7;
+                }
+                
+                yPosition += 3;
+            });
+            
+            pdf.save(`Wind_Assessment_Quiz_${firstName}_${lastName}_${date.replace(/\//g, '-')}.pdf`);
+        }
+
+        function emailResults() {
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const score = document.getElementById('finalScore').textContent;
+            let correctAnswers = 0;
+            questions.forEach((q, index) => {
+                if (currentAnswers[index] === q.correct) {
+                    correctAnswers++;
+                }
+            });
+            const passStatus = parseInt(score) >= 70 ? 'PASSED' : 'FAILED';
+            
+            let emailBody = `Wind Resource Assessment Quiz Results - MENA Regional Focus\n\n`;
+            emailBody += `Trainee: ${firstName} ${lastName}\n`;
+            emailBody += `Score: ${score} (${correctAnswers}/${questions.length} correct)\n`;
+            emailBody += `Status: ${passStatus}\n`;
+            emailBody += `Date: ${new Date().toLocaleDateString()}\n\n`;
+            
+            // Section performance
+            emailBody += `Section Performance:\n`;
+            const sections = [
+                { name: 'Opening & Objectives', start: 0, count: 4 },
+                { name: 'Met Mast vs LiDAR Technology', start: 4, count: 13 },
+                { name: 'Statistical Analysis Methods', start: 17, count: 8 },
+                { name: 'Regional Data Applications', start: 25, count: 9 },
+                { name: 'P50/P90 & Financial Impact', start: 34, count: 10 },
+                { name: 'Standards Compliance', start: 44, count: 8 }
+            ];
+            
+            sections.forEach(section => {
+                let sectionCorrect = 0;
+                for (let i = section.start; i < section.start + section.count; i++) {
+                    if (currentAnswers[i] === questions[i].correct) {
+                        sectionCorrect++;
+                    }
+                }
+                const sectionScore = Math.round((sectionCorrect / section.count) * 100);
+                emailBody += `- ${section.name}: ${sectionCorrect}/${section.count} (${sectionScore}%)\n`;
+            });
+            
+            emailBody += `\nIncorrect Questions:\n`;
+            questions.forEach((q, index) => {
+                const userAnswer = currentAnswers[index];
+                const isCorrect = userAnswer === q.correct;
+                if (!isCorrect) {
+                    emailBody += `\nQ${index + 1}: ${q.question}\n`;
+                    emailBody += `Your answer: ${q.options[userAnswer]}\n`;
+                    emailBody += `Correct answer: ${q.options[q.correct]}\n`;
+                }
+            });
+            
+            const subject = `Wind Resource Assessment Quiz Results - ${firstName} ${lastName} - ${passStatus}`;
+            const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+            window.location.href = mailtoLink;
+        }
+    </script>
+</body>
+</html>
