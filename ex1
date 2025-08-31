@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wind Resource Assessment Training Quiz</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #2196F3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+        
+        .question {
+            background: #f8f9fa;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #2196F3;
+        }
+        
+        .question h3 {
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.2em;
+            line-height: 1.4;
+        }
+        
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+        
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .option:hover {
+            border-color: #2196F3;
+            background: #f0f8ff;
+        }
+        
+        .option input[type="radio"] {
+            margin-right: 12px;
+            margin-top: 3px;
+            transform: scale(1.2);
+        }
+        
+        .option label {
+            line-height: 1.4;
+            cursor: pointer;
+        }
+        
+        .option.correct {
+            border-color: #4CAF50;
+            background: #e8f5e8;
+        }
+        
+        .option.incorrect {
+            border-color: #f44336;
+            background: #ffeaea;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .score {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        
+        .score.excellent { color: #4CAF50; }
+        .score.good { color: #2196F3; }
+        .score.needs-improvement { color: #FF9800; }
+        .score.poor { color: #f44336; }
+        
+        .explanation {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: left;
+        }
+        
+        .explanation h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .explanation p {
+            color: #856404;
+            line-height: 1.5;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            transition: width 0.5s ease;
+        }
+        
+        .quiz-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Wind Resource Assessment</h1>
+            <p>MENA Regional Focus - Comprehensive Training Quiz</p>
+        </div>
+        
+        <div class="content">
+            <div id="userInfo">
+                <div class="form-group">
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" required>
+                </div>
+                <div class="quiz-info">
+                    <h3>Quiz Information</h3>
+                    <p><strong>Total Questions:</strong> 52</p>
+                    <p><strong>Time:</strong> No time limit</p>
+                    <p><strong>Coverage:</strong> All 6 training sections</p>
+                    <p><strong>Passing Score:</strong> 70%</p>
+                </div>
+                <button class="btn" onclick="startQuiz()">Start Quiz</button>
+            </div>
+            
+            <div id="quizSection" class="hidden">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                </div>
+                <div id="questionContainer"></div>
+                <button class="btn" id="submitBtn" onclick="submitQuiz()" style="margin-top: 20px;" disabled>Submit Quiz</button>
+            </div>
+            
+            <div id="resultsSection" class="hidden">
+                <div class="results">
+                    <h2>Quiz Results</h2>
+                    <div id="finalScore" class="score"></div>
+                    <div id="performance"></div>
+                    <button class="btn" onclick="generatePDF()">Download PDF Report</button>
+                    <button class="btn" onclick="emailResults()">Email Results</button>
+                </div>
+                <div id="detailedResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            // Section 1: Opening & Objectives (4 questions)
+            {
+                question: "What is the typical NPV impact of a 0.1 m/s wind speed measurement error on a 100 MW project over 20 years in MENA?",
+                options: [
+                    "$0.5-2M NPV impact",
+                    "$2-8M NPV impact", 
+                    "$10-15M NPV impact",
+                    "$20-25M NPV impact"
+                ],
+                correct: 1,
+                explanation: "According to the training, 0.1 m/s wind speed error = 2-4% energy loss = $2-8M NPV impact over 20 years for a 100 MW project, with high LCOE sensitivity due to MENA financing costs."
+            },
+            {
+                question: "What are the five learning objectives covered in this wind resource assessment training?",
+                options: [
+                    "Technology selection, distribution analysis, bias correction, uncertainty quantification, compliance development",
+                    "Site selection, equipment installation, data analysis, reporting, financing",
+                    "Measurement, modeling, validation, optimization, implementation", 
+                    "Planning, execution, analysis, documentation, presentation"
+                ],
+                correct: 0,
+                explanation: "The five objectives are: 1) Select optimal measurement technology, 2) Calculate Weibull parameters, 3) Apply bias correction methods, 4) Quantify P50/P90 uncertainties, 5) Develop compliant measurement campaigns."
+            },
+            {
+                question: "What temperature range must equipment withstand in MENA conditions?",
+                options: [
+                    "-20°C to +40°C",
+                    "-30°C to +50°C",
+                    "-5°C to +55°C",
+                    "-10°C to +45°C"
+                ],
+                correct: 2,
+                explanation: "MENA operational conditions require equipment to withstand extreme temperature variations from -5°C to +55°C, as demonstrated by projects like Shagaya Wind Farm in Kuwait."
+            },
+            {
+                question: "Which country leads MENA in total installed wind capacity as of 2024-2025?",
+                options: [
+                    "Morocco (1.4 GW)",
+                    "Egypt (1.6 GW)",
+                    "Jordan (0.9 GW)",
+                    "UAE (0.8 GW)"
+                ],
+                correct: 1,
+                explanation: "Egypt leads with 1.6 GW installed capacity, followed by Morocco (1.4 GW) and Jordan (0.9 GW), with emerging markets in Saudi Arabia and UAE."
+            },
+            
+            // Section 2: Met Mast vs LiDAR Technology (13 questions)
+            {
+                question: "What is the typical measurement uncertainty for a met mast at 120m height?",
+                options: [
+                    "±1.0% wind speed uncertainty",
+                    "±1.5% wind speed uncertainty",
+                    "±2.0% wind speed uncertainty", 
+                    "±2.5% wind speed uncertainty"
+                ],
+                correct: 1,
+                explanation: "Met mast at 120m typically achieves ±1.5% wind speed uncertainty, compared to ±2.0% for nacelle LiDAR and ±2.5% for ground-based LiDAR at 180m."
+            },
+            {
+                question: "According to IEC 61400-50-1, what is the required anemometer accuracy class?",
+                options: [
+                    "Class 2: ±0.2 m/s",
+                    "Class 1: ±0.1 m/s",
+                    "Class 0.5: ±0.05 m/s",
+                    "Any certified class"
+                ],
+                correct: 1,
+                explanation: "IEC 61400-50-1 requires Class 1 anemometers with ±0.1 m/s accuracy for compliance, along with annual calibration and proper boom length specifications."
+            },
+            {
+                question: "What boom length is required relative to mast diameter per IEC standards?",
+                options: [
+                    "1.5 × mast diameter",
+                    "2.0 × mast diameter", 
+                    "2.5 × mast diameter",
+                    "3.0 × mast diameter"
+                ],
+                correct: 2,
+                explanation: "IEC 61400-50-1 specifies boom length must be 2.5 × mast diameter to minimize flow distortion and ensure measurement accuracy."
+            },
+            {
+                question: "What is the minimum data recovery requirement for annual measurements?",
+                options: [
+                    ">90% annually",
+                    ">92% annually",
+                    ">95% annually", 
+                    ">98% annually"
+                ],
+                correct: 2,
+                explanation: "IEC standards require >95% annual data recovery to ensure statistical validity and banking acceptance of measurement campaigns."
+            },
+            {
+                question: "For LiDAR systems per IEC 61400-50-2, what is the required range gate resolution?",
+                options: [
+                    "≤10m",
+                    "≤15m",
+                    "≤20m",
+                    "≤25m"
+                ],
+                correct: 2,
+                explanation: "IEC 61400-50-2 requires LiDAR range gate resolution ≤20m for proper vertical wind profile characterization and compliance."
+            },
+            {
+                question: "What UV resistance requirement is specified for MENA equipment?",
+                options: [
+                    "Material degradation <2% over 10 years",
+                    "Material degradation <5% over 10 years",
+                    "Material degradation <10% over 10 years",
+                    "No specific UV requirement"
+                ],
+                correct: 1,
+                explanation: "MENA equipment must have UV resistance with material degradation <5% over 10 years due to extreme solar radiation levels in desert environments."
+            },
+            {
+                question: "How many dust storm events does Shagaya Wind Farm experience annually?",
+                options: [
+                    "5-10 events",
+                    "10-15 events", 
+                    "15-20 events",
+                    "20-25 events"
+                ],
+                correct: 2,
+                explanation: "Shagaya experiences 15-20 dust storm events annually, demonstrating the challenging operational environment while maintaining >92% equipment availability."
+            },
+            {
+                question: "What is the 2-year total cost for a 120m met mast campaign including O&M?",
+                options: [
+                    "$146,000",
+                    "$166,000",
+                    "$186,000",
+                    "$206,000"
+                ],
+                correct: 1,
+                explanation: "Total 2-year cost: $85,000 equipment + $45,000 installation + $36,000 O&M (2×$18,000) = $166,000 for 120m met mast."
+            },
+            {
+                question: "At what project size threshold does LiDAR premium typically become justified?",
+                options: [
+                    ">30 MW",
+                    ">50 MW",
+                    ">75 MW", 
+                    ">100 MW"
+                ],
+                correct: 1,
+                explanation: "Projects >50 MW typically justify LiDAR premium due to improved spatial coverage and reduced uncertainty benefits outweighing higher costs."
+            },
+            {
+                question: "What IP rating is essential for MENA sand/dust protection?",
+                options: [
+                    "IP54",
+                    "IP65", 
+                    "IP67",
+                    "IP68"
+                ],
+                correct: 1,
+                explanation: "IP65 minimum rating is essential for MENA conditions, with IP6X providing complete dust ingress protection critical for desert environments."
+            },
+            {
+                question: "What is the typical power consumption difference between met mast and ground LiDAR?",
+                options: [
+                    "Met mast 50W vs Ground LiDAR 150W",
+                    "Met mast 50W vs Ground LiDAR 250W",
+                    "Met mast 100W vs Ground LiDAR 200W",
+                    "Met mast 75W vs Ground LiDAR 300W"
+                ],
+                correct: 1,
+                explanation: "Met mast typically consumes 50W while ground LiDAR consumes 250W, requiring larger power supply systems for remote installations."
+            },
+            {
+                question: "According to the decision matrix, what is the highest weighted criterion for technology selection?",
+                options: [
+                    "Cost (2-year campaign)",
+                    "Accuracy",
+                    "Environmental robustness", 
+                    "Banking acceptance"
+                ],
+                correct: 1,
+                explanation: "Accuracy receives the highest weighting at 25%, followed by environmental robustness at 20%, reflecting the critical importance of measurement quality."
+            },
+            {
+                question: "What is the recommended measurement sector coverage per IEC 61400-12-1?",
+                options: [
+                    "180° minimum",
+                    "240° minimum",
+                    "270° minimum",
+                    "360° required"
+                ],
+                correct: 2,
+                explanation: "IEC 61400-12-1 requires 270° minimum measurement sector (±45° from prevailing wind) for valid power performance assessment."
+            },
+            
+            // Section 3: Statistical Analysis Methods (8 questions)
+            {
+                question: "In the Weibull distribution, what does a shape parameter k<2 indicate?",
+                options: [
+                    "Very consistent wind speeds", 
+                    "High variability, gusty conditions",
+                    "Average wind conditions",
+                    "Measurement error"
+                ],
+                correct: 1,
+                explanation: "Shape parameter k<2 indicates high variability and gusty conditions, k=2 is Rayleigh distribution, and k>2 indicates more consistent wind speeds."
+            },
+            {
+                question: "What are typical k-values for MENA desert interior sites?",
+                options: [
+                    "1.5-2.0",
+                    "1.8-2.2", 
+                    "2.2-2.8",
+                    "2.8-3.2"
+                ],
+                correct: 2,
+                explanation: "Desert interior sites (Saudi Arabia, Interior UAE) typically have k-values of 2.2-2.8, representing more consistent wind speeds due to Shamal winds and less thermal turbulence."
+            },
+            {
+                question: "For coastal Arabian Gulf sites, what are typical k-values?",
+                options: [
+                    "1.5-2.0",
+                    "1.8-2.2",
+                    "2.2-2.8",
+                    "2.8-3.2"
+                ],
+                correct: 1,
+                explanation: "Coastal Arabian Gulf sites (UAE, Qatar, Kuwait) have k-values of 1.8-2.2 due to thermal effects and strong diurnal cycling from sea-land interactions."
+            },
+            {
+                question: "What is the relationship between scale parameter c and mean wind speed for Rayleigh distribution (k=2)?",
+                options: [
+                    "c ≈ 0.89 × mean wind speed",
+                    "c ≈ 1.13 × mean wind speed",
+                    "c ≈ 1.27 × mean wind speed", 
+                    "c ≈ 1.41 × mean wind speed"
+                ],
+                correct: 1,
+                explanation: "For Rayleigh distribution (k=2), the scale parameter c ≈ 1.13 × mean wind speed, which is used as an initial estimate in MLE calculations."
+            },
+            {
+                question: "In Maximum Likelihood Estimation for Weibull parameters, what is the convergence criteria typically used?",
+                options: [
+                    "|k(n+1) - k(n)| < 0.01",
+                    "|k(n+1) - k(n)| < 0.001", 
+                    "|k(n+1) - k(n)| < 0.0001",
+                    "|k(n+1) - k(n)| < 0.1"
+                ],
+                correct: 1,
+                explanation: "MLE convergence criteria is typically |k(n+1) - k(n)| < 0.001 to ensure accurate parameter estimation through Newton-Raphson iteration."
+            },
+            {
+                question: "What wind speed threshold is typically used to remove calm periods in Weibull analysis?",
+                options: [
+                    "v < 0.3 m/s",
+                    "v < 0.5 m/s",
+                    "v < 1.0 m/s",
+                    "v < 1.5 m/s"
+                ],
+                correct: 1,
+                explanation: "Wind speeds v < 0.5 m/s are typically removed as calm periods since they don't contribute to energy production and can skew distribution fitting."
+            },
+            {
+                question: "For Shagaya case study at 80m height, what were the final converged Weibull parameters?",
+                options: [
+                    "k = 2.08, c = 9.05 m/s",
+                    "k = 2.11, c = 9.07 m/s", 
+                    "k = 2.15, c = 9.10 m/s",
+                    "k = 2.20, c = 9.15 m/s"
+                ],
+                correct: 1,
+                explanation: "The Shagaya example converged to k = 2.11, c = 9.07 m/s after 3 MLE iterations, representing typical desert interior wind characteristics."
+            },
+            {
+                question: "What energy density range is typical for desert interior MENA sites at 100m?",
+                options: [
+                    "200-400 W/m²",
+                    "300-600 W/m²",
+                    "400-800 W/m²",
+                    "500-900 W/m²"
+                ],
+                correct: 1,
+                explanation: "Desert interior sites typically achieve 300-600 W/m² energy density at 100m, higher than coastal sites (200-400 W/m²) due to consistent wind patterns."
+            },
+            
+            // Section 4: Regional Data Applications (9 questions)
+            {
+                question: "What is ERA5's spatial resolution?",
+                options: [
+                    "25 km (0.25° × 0.25°)",
+                    "31 km (0.28° × 0.28°)",
+                    "40 km (0.35° × 0.35°)", 
+                    "55 km (0.5° × 0.5°)"
+                ],
+                correct: 1,
+                explanation: "ERA5 has 31 km spatial resolution (0.28° × 0.28°) with hourly temporal resolution, providing higher resolution than MERRA-2's 55 km grid."
+            },
+            {
+                question: "What is MERRA-2's spatial resolution?",
+                options: [
+                    "31 km (0.28° × 0.28°)",
+                    "45 km (0.45° × 0.45°)",
+                    "55 km (0.625° × 0.5°)",
+                    "65 km (0.65° × 0.65°)"
+                ],
+                correct: 2,
+                explanation: "MERRA-2 has 55 km spatial resolution (0.625° × 0.5°) with hourly temporal resolution and better aerosol representation than ERA5."
+            },
+            {
+                question: "Which reanalysis dataset better captures Shamal wind intensity in the Arabian Peninsula?",
+                options: [
+                    "MERRA-2 due to aerosol effects",
+                    "ERA5 due to better intensity capture",
+                    "Both perform equally", 
+                    "Neither captures Shamal well"
+                ],
+                correct: 1,
+                explanation: "ERA5 better captures Shamal wind intensity in the Arabian Peninsula, despite MERRA-2's advantages in aerosol representation and dust storm effects."
+            },
+            {
+                question: "In linear regression bias correction (v_corrected = a·v_reanalysis + b), what do coefficients a and b represent?",
+                options: [
+                    "a = intercept, b = slope",
+                    "a = slope, b = intercept", 
+                    "Both represent scaling factors",
+                    "Both represent offset corrections"
+                ],
+                correct: 1,
+                explanation: "Coefficient a (slope) = σ(observed)/σ(reanalysis), coefficient b (intercept) = v̄(observed) - a·v̄(reanalysis) for linear bias correction."
+            },
+            {
+                question: "What is the typical regression uncertainty in bias correction methods for MENA?",
+                options: [
+                    "±0.1 m/s",
+                    "±0.2 m/s",
+                    "±0.3 m/s", 
+                    "±0.5 m/s"
+                ],
+                correct: 1,
+                explanation: "Typical regression uncertainty in MENA bias correction is ±0.2 m/s, which must be included in the overall uncertainty budget for energy assessments."
+            },
+            {
+                question: "What correlation coefficient indicates excellent correlation for MCP validation?",
+                options: [
+                    "r > 0.75",
+                    "r > 0.80",
+                    "r > 0.85", 
+                    "r > 0.90"
+                ],
+                correct: 2,
+                explanation: "r > 0.85 indicates excellent correlation, r = 0.75-0.85 is good correlation, and r < 0.75 is poor correlation requiring caution in MCP application."
+            },
+            {
+                question: "Which wind sectors typically show the highest correlation in MENA sites?",
+                options: [
+                    "All sectors equally",
+                    "Prevailing wind sectors (r = 0.85-0.90)",
+                    "Calm sectors (r = 0.90-0.95)",
+                    "Complex terrain sectors (r = 0.80-0.85)"
+                ],
+                correct: 1,
+                explanation: "Prevailing wind sectors show highest correlation (r = 0.85-0.90), while calm sectors are lower (r = 0.60-0.75) and complex terrain sectors intermediate (r = 0.70-0.80)."
+            },
+            {
+                question: "What is typical inter-annual variability (IAV) for coastal MENA sites?",
+                options: [
+                    "3-5%",
+                    "5-8%",
+                    "8-12%", 
+                    "10-15%"
+                ],
+                correct: 1,
+                explanation: "Coastal sites have IAV = 5-8%, desert interior = 8-12%, complex terrain = 10-15%. Lower IAV indicates more consistent year-to-year wind patterns."
+            },
+            {
+                question: "What uncertainty reduction is typically achieved by extending from 12-month to 24-month campaigns?",
+                options: [
+                    "±15% to ±12%",
+                    "±15% to ±8%",
+                    "±12% to ±8%", 
+                    "±10% to ±6%"
+                ],
+                correct: 1,
+                explanation: "Extending from 12-month (±15% uncertainty) to 24-month campaigns (±8% uncertainty) significantly improves representativity assessment."
+            },
+            
+            // Section 5: P50/P90 & Financial Impact (10 questions)
+            {
+                question: "What is the combined measurement uncertainty (σ_meas) for typical met mast installations?",
+                options: [
+                    "±0.10 m/s", 
+                    "±0.15 m/s",
+                    "±0.20 m/s",
+                    "±0.25 m/s"
+                ],
+                correct: 1,
+                explanation: "Combined measurement uncertainty σ_meas = ±0.15 m/s includes anemometer accuracy (±0.1 m/s), calibration drift (±0.05 m/s), and installation effects (±0.1 m/s)."
+            },
+            {
+                question: "What is typical long-term correlation uncertainty (σ_MCP) for 12-month campaigns?",
+                options: [
+                    "±0.2 m/s",
+                    "±0.3 m/s",
+                    "±0.4 m/s", 
+                    "±0.5 m/s"
+                ],
+                correct: 2,
+                explanation: "σ_MCP = ±0.4 m/s for 12-month campaigns, combining regression uncertainty (±0.2 m/s), temporal stability (±0.1 m/s), reference data quality (±0.1 m/s), and representativity (±0.3 m/s)."
+            },
+            {
+                question: "What is typical modeling uncertainty (σ_model) for wind resource assessment?",
+                options: [
+                    "±0.4 m/s",
+                    "±0.5 m/s", 
+                    "±0.6 m/s",
+                    "±0.8 m/s"
+                ],
+                correct: 2,
+                explanation: "σ_model = ±0.6 m/s combines vertical extrapolation (±0.2 m/s), horizontal extrapolation (±0.3 m/s), terrain complexity (±0.4 m/s), and wake effects (±0.2 m/s)."
+            },
+            {
+                question: "For the UAE project example with 8.5 m/s hub height wind speed and ±0.9 m/s uncertainty, what is the energy uncertainty using the 3× multiplier rule?",
+                options: [
+                    "±28%",
+                    "±32%", 
+                    "±36%",
+                    "±40%"
+                ],
+                correct: 1,
+                explanation: "Energy uncertainty ≈ 3 × (Δv/v) = 3 × (0.9/8.5) = 3 × 10.6% = ±32% (1-sigma), leading to P50/P90 range of +20%/-28%."
+            },
+            {
+                question: "
