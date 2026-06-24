@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5,viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0b0d10">
+    <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'&gt;&lt;rect width='32' height='32' rx='6' fill='%234f8cff'/&gt;&lt;text x='16' y='22' font-size='16' font-weight='700' font-family='system-ui' text-anchor='middle' fill='%230b0d10'&gt;CS&lt;/text&gt;&lt;/svg&gt;">
+    <title>CodeSmith</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark-dimmed.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/editor/editor.main.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css">
+</head>
+<body>
+    <!-- =========================================================================
+    Layout
+    ========================================================================= -->
+    <div id="app" class="flex flex-col h-full">
+    <!-- ========== Top bar ========== -->
+    <header class="hairline-b flex items-center justify-between px-4" style="height:48px;">
+    <div class="flex items-center gap-3">
+    <button id="btn-toggle-sidebar" class="iconbtn" aria-label="Toggle sessions sidebar" title="Toggle sidebar">
+    <!-- sidebar icon -->
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+    <line x1="9" y1="4" x2="9" y2="20"></line>
+    </svg>
+    </button>
+    <div class="flex items-center gap-2">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4f8cff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M14.7 6.3a4.5 4.5 0 0 1 6 6L10 23H4v-6L14.7 6.3z"></path>
+    <path d="M13 7l4 4"></path>
+    </svg>
+    <span class="font-semibold tracking-tight text-[15px]">CodeSmith</span>
+    <span class="text-muted text-[11px] font-mono">v0.1.0</span>
+    </div>
+    <span id="stage-pill" class="pill" aria-live="polite">
+    <span class="dot gray" aria-hidden="true"></span><span>Idle</span>
+    <div class="mode-toggle" style="margin-left:8px;">
+    <button class="mode-btn active" data-mode="chat">Chat</button>
+    <button class="mode-btn" data-mode="build">Build</button>
+    <button class="mode-btn" data-mode="explore">Explore</button>
+    </div>
+    </span>
+    </div>
+    <div class="flex items-center gap-1">
+    <button id="btn-settings" class="iconbtn" aria-label="Open settings" title="Settings">
+    <!-- gear -->
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="3"></circle>
+    <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.2.4.5.8 1 1h.1a2 2 0 1 1 0 4H21a1.7 1.7 0 0 0-1.5 1z"></path>
+    </svg>
+    </button>
+    <button id="btn-help" class="iconbtn" aria-label="Help" title="Help">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="10"></circle>
+    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+    </svg>
+    </button>
+    </div>
+    </header>
+    <!-- ========== Body: sidebar + main ========== -->
+    <div class="flex flex-1 min-h-0">
+    <!-- Sidebar -->
+    <div id="sidebar-backdrop" style="display:none;position:fixed;inset:48px 0 24px;background:rgba(0,0,0,0.5);z-index:39;" aria-hidden="true"></div>
+    <aside id="sidebar" class="sidebar hairline-r flex flex-col" aria-label="Sessions">
+    <div class="p-3 hairline-b" style="display:flex;flex-direction:column;gap:6px;">
+    <button id="btn-new-session" class="btn btn-primary w-full" aria-label="Create a new session">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="12" y1="5" x2="12" y2="19"></line>
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+    <span>New session</span>
+    </button>
+    <div style="display:flex;gap:4px;">
+    <button id="btn-clear-sessions" class="btn btn-ghost" style="flex:1;font-size:10px;color:#5b6474;" title="Clear all sessions">Clear sessions</button>
+    <button id="btn-clear-artifacts" class="btn btn-ghost" style="flex:1;font-size:10px;color:#5b6474;" title="Clear all artifacts">Clear artifacts</button>
+    </div>
+    </div>
+    <div id="session-list" class="flex-1 min-h-0 overflow-y-auto p-2 flex flex-col gap-1" role="listbox" aria-label="Past sessions"></div>
+    <div class="hairline-t p-2">
+    <div class="text-[11px] text-muted px-2 py-1 font-semibold uppercase tracking-wider">Artifacts</div>
+    <div id="artifact-list" class="flex flex-col gap-1 max-h-[200px] overflow-y-auto"></div>
+    </div>
+    </aside>
+    <!-- Main -->
+    <main class="flex flex-col flex-1 min-w-0">
+    <div class="split-layout flex-1 min-h-0">
+    <!-- Left: chat (always visible) -->
+    <div id="split-left" class="split-left">
+    <div id="chat-scroll" class="flex-1 min-h-0 overflow-y-auto">
+    <div id="chat-list" class="flex flex-col gap-4 p-6 max-w-[920px] mx-auto"></div>
+    <div id="chat-empty" class="empty" hidden="">
+    <div class="text-[15px] text-text">What do you want to build?</div>
+    <div class="text-[12px]" style="max-width:400px;">Describe a program in plain English, or pick a template to get started.</div>
+    <div class="mode-toggle" id="target-toggle" style="margin: 8px 0; flex-wrap: wrap;">
+    <button class="mode-btn active" data-target="python" title="Python script or package">🐍 Python</button>
+    <button class="mode-btn" data-target="webapp" title="Single-page HTML/JS web app">🌐 Web app</button>
+    <button class="mode-btn" data-target="cli" title="Command-line tool">⌨️ CLI tool</button>
+    <button class="mode-btn" data-target="api" title="REST API server (FastAPI)">🔌 API server</button>
+    <button class="mode-btn" data-target="notebook" title="Jupyter notebook">📓 Notebook</button>
+    </div>
+    <div class="template-grid" id="template-grid"></div>
+    </div>
+    </div>
+    </div>
+    <!-- Right: build panel (hidden in chat mode) -->
+    <div id="split-right" class="split-right" hidden="">
+    <!-- Stepper -->
+    <div class="build-stepper" id="build-stepper">
+    <div class="step-item active" data-step="a">
+    <span class="step-num">A</span> <span>Requirements</span>
+    </div>
+    <span class="step-arrow">→</span>
+    <div class="step-item" data-step="b">
+    <span class="step-num">B</span> <span>Skeleton</span>
+    </div>
+    <span class="step-arrow">→</span>
+    <div class="step-item" data-step="c">
+    <span class="step-num">C</span> <span>Build</span>
+    </div>
+    <div style="margin-left:auto;">
+    <button id="btn-quick-build" class="btn btn-ghost" style="font-size:11px;" title="Skip to single-block build (Day 4 mode)">Quick build</button>
+    </div>
+    </div>
+    <!-- Stage A: Requirements -->
+    <div id="stage-a-panel" class="stage-a-layout" style="flex:1;min-height:0;">
+    <!-- A: conversation -->
+    <div class="stage-a-chat">
+    <div style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:8px;">
+    <span class="text-[12px] text-muted font-semibold">Requirements Interview</span>
+    <button id="btn-skip-to-skeleton" class="btn btn-ghost" style="font-size:11px;margin-left:auto;">Skip to skeleton →</button>
+    </div>
+    <div id="stage-a-messages" class="stage-a-messages"></div>
+    <div class="stage-a-input-bar">
+    <textarea id="stage-a-input" rows="1" placeholder="Answer the question…"></textarea>
+    <button id="btn-stage-a-send" class="btn btn-primary" style="font-size:12px;">Send</button>
+    </div>
+    </div>
+    <!-- A: live spec -->
+    <div class="stage-a-spec">
+    <div style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;gap:8px;">
+    <span class="text-[12px] text-muted font-semibold">Live Spec</span>
+    <button id="btn-edit-spec-a" class="btn btn-ghost" style="font-size:11px;margin-left:auto;">Edit spec</button>
+    </div>
+    <div id="stage-a-spec-card" class="spec-live-card"></div>
+    </div>
+    </div>
+    <!-- Stage B: Skeleton -->
+    <div id="stage-b-panel" class="stage-b-layout" hidden="">
+    <div id="stage-b-warn" class="large-skeleton-warn" hidden="">Large skeleton (10+ modules). Consider splitting.</div>
+    <div id="mermaid-container" class="mermaid-container">
+    <div class="text-muted text-[13px]">Generating skeleton…</div>
+    </div>
+    <div id="stage-b-module-list" class="module-list"></div>
+    <div class="stage-b-actions">
+    <button id="btn-b-export" class="btn" style="font-size:12px;">📥 Export image</button>
+    <button id="btn-b-export-json" class="btn" style="font-size:12px;">💾 Save JSON</button>
+    <button id="btn-b-import-json" class="btn" style="font-size:12px;">📂 Load JSON</button>
+    <button id="btn-b-edit-json" class="btn" style="font-size:12px;">✎ Edit JSON</button>
+    <input type="file" id="b-import-file" hidden="" accept=".json">
+    <button id="btn-b-changes" class="btn" style="font-size:12px;">Request changes</button>
+    <button id="btn-b-regenerate" class="btn" style="font-size:12px;">Regenerate</button>
+    <button id="btn-b-approve" class="btn btn-primary" style="font-size:12px;margin-left:auto;">Approve &amp; build</button>
+    </div>
+    </div>
+    <div id="stage-c-panel" hidden="" style="display:flex;flex-direction:column;flex:1;min-height:0;">
+    <!-- Controls bar -->
+    <div class="stage-c-controls">
+    <button id="btn-sc-start" class="btn btn-primary" style="font-size:12px;">Start build</button>
+    <button id="btn-sc-pause" class="btn" style="font-size:12px;" hidden="">Pause</button>
+    <button id="btn-sc-resume" class="btn btn-primary" style="font-size:12px;" hidden="">Resume</button>
+    <button id="btn-sc-stop" class="btn" style="font-size:12px;color:#ff6b6b;" hidden="">Stop</button>
+    <button id="btn-sc-symtable" class="btn btn-ghost" style="font-size:11px;" title="View symbol table">Symbols</button>
+    <label style="font-size:11px;color:#8b92a1;display:flex;align-items:center;gap:4px;cursor:pointer;">
+    <input type="checkbox" id="sc-review-tests" style="accent-color:#4f8cff;"> Review tests
+    </label>
+    <button id="btn-sc-download-draft" class="btn" style="font-size:12px;" title="Download untested draft package">Download draft</button>
+    <div class="sc-progress"><div id="sc-progress-bar" class="sc-progress-bar" style="width:0%;"></div></div>
+    <span id="sc-progress-text" class="sc-progress-text">0 / 0</span>
+    <button id="btn-sc-download-all" class="btn" style="font-size:12px;margin-left:auto;" hidden="" title="Download all as zip">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> All
+    </button>
+    </div>
+    <!-- 3-column layout -->
+    <div class="stage-c-layout" style="flex:1;min-height:0;">
+    <!-- Left: module list -->
+    <div class="stage-c-modules">
+    <div class="stage-c-modules-header">Modules</div>
+    <div id="sc-module-list" style="flex:1;overflow-y:auto;padding:4px 0;"></div>
+    </div>
+    <!-- Center: active module code/tests/output -->
+    <div class="stage-c-center">
+    <div class="build-header" style="padding:6px 10px;">
+    <span id="build-module-name" class="build-module-name" style="font-size:13px;">—</span>
+    <span id="build-badge" class="build-badge badge-draft" style="font-size:9px;">Pending</span>
+    <span id="build-attempts" class="attempt-counter"></span>
+    <div style="margin-left:auto;display:flex;gap:6px;">
+    <button id="btn-build-run" class="btn btn-primary" style="font-size:12px;" disabled="">Run</button>
+    <button id="btn-build-download" class="btn" style="font-size:12px;" title="Download as zip" disabled="">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+    </button>
+    </div>
+    </div>
+    <div id="build-spec-card" class="spec-card" hidden="">
+    <div style="display:flex;align-items:center;">
+    <button class="spec-toggle" id="spec-toggle-btn" style="flex:1;">
+    <span class="arrow" style="font-size:10px;" aria-hidden="true">▶</span> Spec
+    </button>
+    <button id="btn-edit-spec" class="btn btn-ghost" style="font-size:11px;padding:2px 8px;">Edit</button>
+    </div>
+    <div id="build-spec-body" class="spec-body"></div>
+    </div>
+    <div class="build-header" style="padding:6px 10px;">
+    <span id="sc-active-name" class="build-module-name" style="font-size:13px;">—</span>
+    <span id="sc-active-badge" class="build-badge badge-draft" style="font-size:9px;">Pending</span>
+    <span id="sc-active-attempt" class="attempt-counter"></span>
+    </div>
+    <div class="build-tabs">
+    <button class="build-tab active" data-sctab="code">Code</button>
+    <button class="build-tab" data-sctab="tests">Tests</button>
+    <button class="build-tab" data-sctab="output">Output</button>
+    </div>
+    <div id="sc-code" class="build-content build-code-view active" data-sccontent="code">
+    <pre><code class="language-python" id="sc-code-display"></code></pre>
+    <pre><code class="language-python" id="build-code-display" hidden=""></code></pre>
+    </div>
+    <div id="sc-tests" class="build-content build-code-view" data-sccontent="tests" hidden="">
+    <pre><code class="language-python" id="sc-tests-display"></code></pre>
+    <pre><code class="language-python" id="build-tests-display" hidden=""></code></pre>
+    </div>
+    <div id="sc-output" class="build-content build-output" data-sccontent="output" hidden="">
+    <div id="sc-output-display"></div>
+    <div id="build-output-display" hidden=""></div>
+    </div>
+    <div id="sc-escalation-bar" class="escalation-bar" hidden="">
+    <button id="btn-sc-edit-rerun" class="btn" style="font-size:11px;">Edit &amp; rerun</button>
+    <button id="btn-sc-regen" class="btn" style="font-size:11px;">Regenerate</button>
+    <button id="btn-sc-bypass" class="btn" style="font-size:11px;color:#f59e0b;">Bypass &amp; continue</button>
+    <button id="btn-sc-skip-mod" class="btn" style="font-size:11px;color:#ff6b6b;">Skip module</button>
+    <button id="btn-sc-back-b" class="btn" style="font-size:11px;">Back to skeleton</button>
+    </div>
+    </div>
+    <!-- Right: live log -->
+    <div id="sc-log" class="stage-c-log"></div>
+    </div>
+    </div>
+    <!-- Stage E: Code Explorer + AI Pair Programmer -->
+    <div id="stage-e-panel" hidden="" style="display:flex;flex-direction:column;flex:1;min-height:0;">
+    <div class="explorer-layout" style="flex:1;min-height:0;">
+    <!-- File tree -->
+    <div class="explorer-tree">
+    <div class="explorer-tree-header">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+    Explorer
+    <span style="margin-left:auto;font-size:10px;color:#5b6474;" id="explorer-file-count">0 files</span>
+    </div>
+    <div id="explorer-tree-body" class="explorer-tree-body"></div>
+    <div class="explorer-tree-actions">
+    <button id="btn-explorer-upload" class="btn btn-ghost" style="font-size:10px;flex:1;">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+    Upload
+    </button>
+    <button id="btn-explorer-paste" class="btn btn-ghost" style="font-size:10px;flex:1;">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+    Paste
+    </button>
+    <button id="btn-explorer-folder" class="btn btn-ghost" style="font-size:10px;flex:1;">📁 Folder</button>
+    <button id="btn-explorer-url" class="btn btn-ghost" style="font-size:10px;flex:1;">🌐 URL</button>
+    <button id="btn-explorer-clear" class="btn btn-ghost" style="font-size:10px;color:#5b6474;">✕</button>
+    </div>
+    </div>
+    <div class="explorer-resize-handle" id="explorer-resize-left"></div>
+    <!-- Code editor (Monaco) -->
+    <div class="explorer-editor">
+    <div class="explorer-editor-tabs" id="explorer-tabs"></div>
+    <div class="editor-breadcrumb" id="editor-breadcrumb" hidden="">
+    <span class="bc-active" id="bc-filename">—</span>
+    </div>
+    <div class="explorer-editor-header" id="explorer-editor-header" hidden="">
+    <span class="file-path" id="explorer-file-path">—</span>
+    <span style="margin-left:auto;font-size:10px;color:#5b6474;" id="explorer-cursor-pos">Ln 1, Col 1</span>
+    <span style="font-size:10px;color:#5b6474;" id="explorer-line-info"></span>
+    <button id="btn-explorer-copy-file" class="btn btn-ghost" style="font-size:10px;padding:2px 8px;">Copy</button>
+    <button id="btn-explorer-snapshot" class="btn btn-ghost" style="font-size:10px;padding:2px 8px;">📸 Snapshot</button>
+    <button id="btn-explorer-preview" class="btn btn-ghost" style="font-size:10px;padding:2px 8px;" hidden="">👁 Preview</button>					      </div>
+    <!-- Monaco editor container -->
+    <div id="monaco-container" class="monaco-container">
+    <div id="explorer-drop-zone" class="drop-zone" style="margin:40px auto;max-width:360px;">
+    <div class="drop-zone-icon">📂</div>
+    <div class="drop-zone-text">Drop files here or click Upload</div>
+    <div class="drop-zone-hint">Supports .py .js .ts .html .css .json .md .txt .jsx .vue</div>
+    </div>
+    </div>
+    <!-- Diagnostics panel -->
+    <div id="diagnostics-panel" class="diagnostics-panel" hidden="">
+    <div class="diagnostics-header">
+    <span style="font-weight:600;color:#8b92a1;">Problems</span>
+    <span id="diag-error-count" class="diag-count errors" hidden="">0</span>
+    <span id="diag-warn-count" class="diag-count warnings" hidden="">0</span>
+    <button class="bottom-toggle" style="margin-left:auto;" onclick="document.getElementById('diagnostics-panel').hidden=true;">✕</button>
+    </div>
+    <div id="diagnostics-list"></div>
+    </div>
+    <!-- Integrated terminal -->
+    <div id="integrated-terminal" class="integrated-terminal" hidden="">
+    <div class="terminal-header">
+    <span style="font-weight:600;">Terminal</span>
+    <span id="terminal-status" style="color:#4ade80;">Python 3.12</span>
+    <button id="btn-terminal-clear" class="bottom-toggle" style="margin-left:auto;">Clear</button>
+    <button id="btn-terminal-close" class="bottom-toggle">✕</button>
+    </div>
+    <div id="terminal-body" class="terminal-body"></div>
+    </div>
+    <!-- Snapshots panel -->
+    <div id="snapshots-panel" class="snapshot-panel" hidden="">
+    <div style="display:flex;align-items:center;padding:4px 10px;border-bottom:1px solid rgba(255,255,255,0.04);position:sticky;top:0;background:#0f1319;">
+    <span style="font-size:11px;font-weight:600;color:#8b92a1;">Snapshots</span>
+    <button class="bottom-toggle" style="margin-left:auto;" onclick="document.getElementById('snapshots-panel').hidden=true;">✕</button>
+    </div>
+    <div id="snapshots-list"></div>
+    </div>
+    <!-- Bottom bar -->
+    <div class="explorer-bottom-bar">
+    <button class="bottom-toggle" id="btn-toggle-problems" title="Toggle Problems">⚠ Problems</button>
+    <button class="bottom-toggle" id="btn-toggle-terminal" title="Toggle Terminal (Ctrl+`)">⌨ Terminal</button>
+    <button class="bottom-toggle" id="btn-toggle-snapshots" title="Toggle Snapshots">📸 History</button>
+    <span style="margin-left:auto;" id="explorer-lang-label">—</span>
+    <span id="explorer-encoding">UTF-8</span>
+    </div>
+    </div>
+    <div class="explorer-resize-handle" id="explorer-resize-right"></div>
+    <!-- AI panel -->
+    <div class="explorer-ai">
+    <div class="explorer-ai-tabs">
+    <button class="ai-tab active" data-aitab="analysis">Analysis</button>
+    <button class="ai-tab" data-aitab="pair">Pair Programmer</button>
+    <button class="ai-tab" data-aitab="algo">Algorithm</button>
+    </div>
+    <div class="explorer-model-bar" id="explorer-model-bar">
+    <span style="font-size:9px;color:#5b6474;text-transform:uppercase;letter-spacing:0.5px;">Model</span>
+    <select id="explorer-model-select" style="flex:1;background:#0f1319;color:#e8ecf1;border:1px solid rgba(255,255,255,0.06);border-radius:4px;padding:3px 6px;font-size:10px;font-family:'JetBrains Mono',monospace;">
+    <option value="auto">🧠 Auto (smart routing)</option>
+    <option value="orchestrator">Orchestrator (deep analysis)</option>
+    <option value="worker">Worker (code generation)</option>
+    <option value="fast">Fast (quick answers)</option>
+    </select>
+    <span id="model-for-label" style="font-size:8px;color:#3a3f4a;">for: all</span>
+    </div>
+    <!-- Analysis tab -->
+    <div class="explorer-ai-content active" data-aicontent="analysis">
+    <div id="route-indicator" class="route-indicator" hidden=""></div>
+    <div id="knowledge-summary" class="knowledge-section" hidden=""></div>
+    <div id="explorer-analysis" style="overflow-y:auto;flex:1;">
+    <div class="explorer-empty">
+    <div class="explorer-empty-icon">🔍</div>
+    <div class="explorer-empty-title">No file loaded</div>
+    <div class="explorer-empty-desc">Upload or paste code to see analysis</div>
+    </div>
+    </div>
+    <div style="padding:6px 8px;border-top:1px solid rgba(255,255,255,0.06);">
+    <div id="explorer-token-usage" style="font-size:10px;color:#5b6474;font-family:monospace;text-align:center;padding:2px 0;"></div>
+    <button id="btn-explorer-analyze" class="btn btn-primary" style="font-size:11px;width:100%;" disabled="">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    Analyze with AI
+    </button>
+    </div>
+    <div style="padding:6px 8px;border-top:1px solid rgba(255,255,255,0.06);">
+    <button id="btn-explorer-algo" class="btn btn-primary" style="font-size:11px;flex:1;" disabled="">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+    Generate Flowchart
+    </button>
+    <button id="btn-explorer-algo-export" class="btn" style="font-size:11px;" disabled="" title="Export flowchart">📥</button>
+    </div>
+    </div>
+    <!-- Pair Programmer tab -->
+    <div class="explorer-ai-content" data-aicontent="pair">
+    <div id="pair-chat" class="pair-chat">
+    <div class="explorer-empty" style="padding:16px;">
+    <div class="explorer-empty-icon">🤝</div>
+    <div class="explorer-empty-title">AI Pair Programmer</div>
+    <div class="explorer-empty-desc">Ask for changes, improvements, or bug fixes. Get exact line-by-line edit instructions you can apply with one click.</div>
+    </div>
+    </div>
+    <div class="pair-input-bar">
+    <div class="pair-actions">
+    <button class="pair-quick-btn" data-pair-q="fix">🐛 Fix bugs</button>
+    <button class="pair-quick-btn" data-pair-q="optimize">⚡ Optimize</button>
+    <button class="pair-quick-btn" data-pair-q="refactor">♻️ Refactor</button>
+    <button class="pair-quick-btn" data-pair-q="tests">🧪 Add tests</button>
+    <button class="pair-quick-btn" data-pair-q="docs">📝 Add docs</button>
+    <button class="pair-quick-btn" data-pair-q="types">🏷️ Add types</button>
+    </div>
+    <div style="display:flex;gap:6px;">
+    <textarea id="pair-input" rows="2" placeholder="Describe what to change…"></textarea>
+    <button id="btn-pair-send" class="btn btn-primary" style="font-size:11px;align-self:flex-end;" disabled="">
+    Ask
+    </button>
+    </div>
+    </div>
+    </div>
+    <!-- Algorithm tab -->
+    <div class="explorer-ai-content" data-aicontent="algo">
+    <div id="algo-container" class="algo-container">
+    <div class="explorer-empty">
+    <div class="explorer-empty-icon">🔀</div>
+    <div class="explorer-empty-title">Algorithm Flowchart</div>
+    <div class="explorer-empty-desc">Generates a visual flowchart of the code's logic and control flow</div>
+    </div>
+    </div>
+    <div style="padding:6px 8px;border-top:1px solid rgba(255,255,255,0.06);">
+    <button id="btn-explorer-algo" class="btn btn-primary" style="font-size:11px;width:100%;" disabled="">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+    Generate Flowchart
+    </button>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    <input type="file" id="explorer-file-input" hidden="" multiple="" accept=".py,.js,.ts,.jsx,.tsx,.vue,.html,.css,.json,.md,.txt,.cfg,.toml,.yaml,.yml,.sh,.bat,.sql,.csv,.xml,.env,.gitignore,.ini,.zip,.mmd">
+    <input type="file" id="explorer-folder-input" hidden="" webkitdirectory="" directory="" multiple="">
+    </div>
+    </div>
+    <!-- Composer (always at bottom) -->
+    <div class="hairline-t p-3">
+    <div class="max-w-[920px] mx-auto">
+    <div class="flex items-end gap-2 panel p-2">
+    <label for="composer" class="sr-only">Message</label>
+    <textarea id="composer" rows="1" placeholder="Describe what you want to build…" aria-label="Message input" style="background:transparent;border:none;resize:none;padding:6px 8px;"></textarea>
+    <button id="btn-send" class="btn btn-primary" aria-label="Send message">
+    Send
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="5" y1="12" x2="19" y2="12"></line>
+    <polyline points="12 5 19 12 12 19"></polyline>
+    </svg>
+    </button>
+    </div>
+    <div id="composer-help" class="mt-2 text-[11px] text-muted flex flex-wrap items-center gap-x-3 gap-y-1">
+    <span>Orchestrator:&nbsp;<span id="help-model" class="font-mono text-text/80">—</span></span>
+    <span class="text-muted/50">·</span>
+    <span>API:&nbsp;<span id="help-api" class="font-mono text-text/80">—</span></span>
+    <span class="text-muted/50">·</span>
+    <span class="text-muted/80"><kbd class="font-mono">Enter</kbd> to send, <kbd class="font-mono">Shift+Enter</kbd> for newline</span>
+    </div>
+    </div>
+    </div>
+    </main>
+    </div>
+    <!-- ========== Status strip ========== -->
+    <footer class="status-strip hairline-t" role="status" aria-live="off">
+    <span><span id="st-pyodide-dot" class="dot gray" aria-hidden="true"></span>
+    <span>Pyodide: </span><span id="st-pyodide-text">not loaded</span></span>
+    <span><span id="st-orch-dot" class="dot red" aria-hidden="true"></span>
+    <span>Orchestrator: </span><span id="st-orch-text">no key</span></span>
+    <span>Tokens: <span id="st-tokens" class="font-mono">0 / 100,000</span></span>
+    <span class="ml-auto font-mono text-muted/70" id="st-session-id">—</span>
+    <div style="position:fixed;bottom:28px;right:8px;font-size:10px;color:#5b6474;font-family:monospace;z-index:5;pointer-events:auto;">
+    Built with <a href="https://khalecl.github.io/codesmith/" target="_blank" rel="noopener" style="color:#4f8cff;text-decoration:none;">CodeSmith</a> by <a href="https://github.com/khalecl" target="_blank" rel="noopener" style="color:#8b92a1;text-decoration:none;">Khaled Diab</a>
+    </div>
+    <!-- Mobile status indicator (shown only on small screens) -->
+    <div id="mobile-status-indicator" style="display:none;">
+    <span id="mob-st-orch" style="color:#5b6474;">●</span>
+    <span id="mob-st-py" style="color:#5b6474;margin-left:8px;">●</span>
+    </div>
+    </footer>
+    </div>
+    <!-- ========= Debug panel (Ctrl+Shift+D) — Day 2 ========= -->
+    <div id="debug-panel" class="debug-panel" hidden="">
+    <div style="display:flex;align-items:center;padding:6px 10px 0;">
+    <div class="debug-tabs" style="flex:1;">
+    <button class="debug-tab active" data-tab="repl">REPL</button>
+    <button class="debug-tab" data-tab="files">Files</button>
+    <button class="debug-tab" data-tab="stats">Stats</button>
+    </div>
+    <button id="btn-close-debug" class="iconbtn" aria-label="Close debug panel" style="margin-left:auto;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+    </button>
+    </div>
+    <div class="debug-tab-content active" data-content="repl" style="padding:8px;">
+    <textarea id="debug-code" rows="5" style="font-family:'JetBrains Mono','Fira Code',ui-monospace,monospace;font-size:12px;resize:vertical;min-height:60px;" placeholder="Enter Python code…"></textarea>
+    <div style="display:flex;gap:6px;margin-top:6px;align-items:center;">
+    <button id="btn-debug-run" class="btn btn-primary" style="font-size:12px;">Run</button>
+    <button id="btn-debug-clear" class="btn" style="font-size:12px;">Clear</button>
+    <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:#8b92a1;margin-left:auto;cursor:pointer;">
+    <input type="checkbox" id="debug-session-globals" style="accent-color:#4f8cff;"> Session globals
+    </label>
+    </div>
+    <div id="debug-output" class="debug-output" style="margin-top:8px;border-radius:6px;"></div>
+    </div>
+    <div class="debug-tab-content" data-content="files" style="padding:8px;">
+    <div style="display:flex;gap:6px;margin-bottom:6px;">
+    <button id="btn-debug-refresh-files" class="btn" style="font-size:12px;">Refresh</button>
+    </div>
+    <div id="debug-files" style="background:#0b0d10;border-radius:6px;min-height:80px;max-height:200px;overflow:auto;padding:6px;"></div>
+    <pre id="debug-file-preview" class="debug-output" style="margin-top:6px;border-radius:6px;display:none;max-height:200px;"></pre>
+    </div>
+    <div class="debug-tab-content" data-content="stats">
+    <div id="debug-stats" class="debug-stats"></div>
+    </div>
+    </div>
+    <!-- ========= Settings modal ========= -->
+    <div id="settings-backdrop" class="modal-backdrop" hidden=""></div>
+    <div id="settings-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-title" hidden="" style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:60;">
+    <div class="flex items-center justify-between mb-4">
+    <h2 id="settings-title" class="text-[15px] font-semibold">Settings</h2>
+    <button id="btn-close-settings" class="iconbtn" aria-label="Close settings">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="18" y1="6" x2="6" y2="18"></line>
+    <line x1="6" y1="6" x2="18" y2="18"></line>
+    </svg>
+    </button>
+    </div>
+    <div class="flex flex-col gap-3">
+    <div class="field">
+    <label for="s-api-url">API base URL</label>
+    <input id="s-api-url" type="url" autocomplete="off" spellcheck="false">
+    <div class="text-[11px] text-muted mt-1">
+    Default is the Cloudflare Worker proxy — required because NVIDIA's direct API blocks browser CORS on the free tier.
+    </div>
+    </div>
+    <div class="field">
+    <label for="s-api-key">API key</label>
+    <input id="s-api-key" type="password" autocomplete="off" spellcheck="false" placeholder="nvapi-…">
+    </div>
+    <!-- Models section with fetch button -->
+    <div class="hairline-t pt-3 mt-1">
+    <div class="flex items-center justify-between mb-2">
+    <div class="text-[12px] text-muted">Models</div>
+    <div class="flex items-center gap-2">
+    <span id="models-cache-info" class="text-[11px] text-muted font-mono"></span>
+    <button id="btn-fetch-models" class="btn" aria-label="Fetch available models from the API">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <polyline points="23 4 23 10 17 10"></polyline>
+    <polyline points="1 20 1 14 7 14"></polyline>
+    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+    </svg>
+    Fetch models
+    </button>
+    </div>
+    </div>
+    <datalist id="models-datalist"></datalist>
+    </div>
+    <div class="field">
+    <label for="s-model-orch">Orchestrator model</label>
+    <input id="s-model-orch" type="text" autocomplete="off" spellcheck="false" class="font-mono" list="models-datalist">
+    </div>
+    <div class="field">
+    <label for="s-model-worker">Worker model</label>
+    <input id="s-model-worker" type="text" autocomplete="off" spellcheck="false" class="font-mono" list="models-datalist">
+    </div>
+    <div class="field">
+    <label for="s-model-fast">Fast model</label>
+    <input id="s-model-fast" type="text" autocomplete="off" spellcheck="false" class="font-mono" list="models-datalist">
+    </div>
+    <div class="hairline-t pt-3 mt-1">
+    <div class="text-[12px] text-muted mb-2 font-semibold">Max tokens per response</div>
+    <div class="text-[11px] text-muted mb-2">Caps how long each model can respond. Lower = cheaper + faster, but may truncate complex answers. Typical: 4k–32k.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+    <div class="field">
+    <label for="s-max-orch">Orchestrator</label>
+    <input id="s-max-orch" type="number" min="256" max="200000" step="256" class="font-mono">
+    </div>
+    <div class="field">
+    <label for="s-max-worker">Worker</label>
+    <input id="s-max-worker" type="number" min="256" max="200000" step="256" class="font-mono">
+    </div>
+    <div class="field">
+    <label for="s-max-fast">Fast</label>
+    <input id="s-max-fast" type="number" min="256" max="200000" step="256" class="font-mono">
+    </div>
+    </div>
+    </div>
+    <div class="field">
+    <label for="s-collab-mode">Worker collaboration</label>
+    <select id="s-collab-mode" class="font-mono">
+    <option value="solo">Solo (1 worker, fastest)</option>
+    <option value="critic">Critic-Reviser (2 rounds, recommended)</option>
+    <option value="vote3">Vote of 3 (3 drafts + judge, expensive)</option>
+    </select>
+    <div class="text-[11px] text-muted mt-1">Critic mode reviews each module's first draft and revises before testing. Vote mode generates 3 drafts and picks the best.</div>
+    </div>
+    <div class="field">
+    <label for="s-parallel-workers">Parallel build workers</label>
+    <input id="s-parallel-workers" type="number" min="1" max="6" step="1" class="font-mono">
+    <div class="text-[11px] text-muted mt-1">Build N modules at once (1 = sequential, faster but uses more tokens). Default: 1.</div>
+    </div>
+    <div class="field">
+    <label for="s-budget-cap">Total token budget cap</label>
+    <div style="display:flex;gap:6px;">
+    <input id="s-budget-cap" type="number" min="1000" step="1000" class="font-mono" style="flex:1;">
+    <button id="btn-reset-budget" class="btn" style="font-size:11px;">Reset usage</button>
+    </div>
+    <div class="text-[11px] text-muted mt-1">Display-only counter shown in the status bar. Does not block requests.</div>
+    </div>
+    <div class="hairline-t pt-3 mt-2">
+    <div class="text-[12px] text-muted mb-2 font-semibold">Per-tier endpoints (optional)</div>
+    <div class="text-[11px] text-muted mb-2">Route different tiers to different providers. Leave blank to use defaults above.</div>
+    <div id="endpoint-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <button id="btn-add-endpoint" class="btn btn-ghost" style="font-size:11px;margin-top:6px;">+ Add endpoint</button>
+    </div>
+    <div class="flex items-center gap-2 mt-1">
+    <button id="btn-test-conn" class="btn" aria-label="Test API connection">Test connection</button>
+    <span id="test-result" class="text-[12px]" aria-live="polite"></span>
+    </div>
+    </div>
+    <div class="flex items-center justify-end gap-2 mt-5 hairline-t pt-4">
+    <button id="btn-cancel-settings" class="btn" aria-label="Cancel and close settings">Cancel</button>
+    <button id="btn-save-settings" class="btn btn-primary" aria-label="Save settings">Save</button>
+    </div>
+    </div>
+    <!-- ========= Onboarding overlay (Day 7) ========= -->
+    <div id="onboarding-overlay" class="onboarding-overlay" hidden="">
+    <div class="onboarding-card">
+    <div style="text-align:center;margin-bottom:16px;">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4f8cff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;"><path d="M14.7 6.3a4.5 4.5 0 0 1 6 6L10 23H4v-6L14.7 6.3z"></path><path d="M13 7l4 4"></path></svg>
+    <h2 style="font-size:18px;font-weight:700;margin:8px 0 4px;">Welcome to CodeSmith</h2>
+    <p style="font-size:13px;color:#8b92a1;">Describe what you want built. AI writes the code, tests it, fixes it, and gives you a download.</p>
+    </div>
+    <!-- Step 1: API key -->
+    <div class="onb-step active" data-onb="1">
+    <div class="field" style="margin-bottom:12px;">
+    <label style="font-size:12px;color:#8b92a1;">API key</label>
+    <input id="onb-api-key" type="password" placeholder="nvapi-… or sk-…" autocomplete="off">
+    <div style="font-size:11px;color:#5b6474;margin-top:6px;line-height:1.5;">
+    Get a free key from
+    <a href="https://build.nvidia.com" target="_blank" rel="noopener" style="color:#4f8cff;">build.nvidia.com</a> or
+    <a href="https://console.groq.com" target="_blank" rel="noopener" style="color:#4f8cff;">console.groq.com</a>.
+    Any OpenAI-compatible endpoint works.
+    </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+    <button id="onb-skip" class="btn btn-ghost" style="font-size:12px;color:#5b6474;">Skip — configure later</button>
+    <button id="onb-next-1" class="btn btn-primary" style="font-size:12px;">Next →</button>
+    </div>
+    </div>
+    <!-- Step 2: Presets -->
+    <div class="onb-step" data-onb="2">
+    <div style="font-size:13px;color:#8b92a1;margin-bottom:10px;">Choose a model preset:</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+    <div class="preset-card" data-preset="nvidia">
+    <div style="font-size:13px;font-weight:600;color:#e8ecf1;">NVIDIA free tier</div>
+    <div style="font-size:11px;color:#8b92a1;">Kimi-K2 orchestrator + Devstral worker. Best quality, 40 req/min.</div>
+    </div>
+    <div class="preset-card" data-preset="groq">
+    <div style="font-size:13px;font-weight:600;color:#e8ecf1;">Groq free tier</div>
+    <div style="font-size:11px;color:#8b92a1;">Llama-4 Maverick orchestrator + Qwen Coder worker. Fastest inference.</div>
+    </div>
+    <div class="preset-card" data-preset="custom">
+    <div style="font-size:13px;font-weight:600;color:#e8ecf1;">Bring your own</div>
+    <div style="font-size:11px;color:#8b92a1;">Anthropic, OpenAI, or any OpenAI-compatible endpoint.</div>
+    </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;">
+    <button id="onb-back-2" class="btn btn-ghost" style="font-size:12px;">← Back</button>
+    <button id="onb-next-2" class="btn btn-primary" style="font-size:12px;">Next →</button>
+    </div>
+    </div>
+    <!-- Step 3: Sandbox -->
+    <div class="onb-step" data-onb="3">
+    <div style="text-align:center;padding:16px 0;">
+    <div style="font-size:13px;color:#8b92a1;margin-bottom:12px;">Optionally warm up the Python sandbox now (downloads ~15MB).</div>
+    <button id="onb-warmup" class="btn" style="font-size:13px;">Warm up Python sandbox</button>
+    <div id="onb-warmup-status" style="font-size:11px;color:#5b6474;margin-top:8px;"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;">
+    <button id="onb-back-3" class="btn btn-ghost" style="font-size:12px;">← Back</button>
+    <button id="onb-finish" class="btn btn-primary" style="font-size:12px;">Get started</button>
+    </div>
+    </div>
+    <div class="onb-step-dots">
+    <div class="onb-dot active" data-dot="1"></div>
+    <div class="onb-dot" data-dot="2"></div>
+    <div class="onb-dot" data-dot="3"></div>
+    </div>
+    </div>
+    </div>
+    <!-- =========================================================================
+    Script
+    ========================================================================= -->
+    <script src="app.js"></script>
+</body>
+</html>
