@@ -1,58 +1,7 @@
-mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });
-
-// ===== Next Script Block =====
-
-var require = { paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } };
-
-// ===== Next Script Block =====
-
-require(['vs/editor/editor.main'], function() {
-    window._monacoReady = true;
-    // Load xterm AFTER Monaco owns the AMD loader
-	var _amdDefine = window.define;
-	    window.define = undefined;
-	    var s1 = document.createElement('script');
-	    s1.src = 'https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js';
-	    s1.onload = function() {
-	      var s2 = document.createElement('script');
-	      s2.src = 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js';
-	      s2.onload = function() { window.define = _amdDefine; };
-	      document.head.appendChild(s2);
-	    };
-	    document.head.appendChild(s1);
-  });
-
-// ===== Next Script Block =====
-
-// Tailwind config must be set before the runtime script renders anything.
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        colors: {
-          bg:       '#0b0d10',
-          panel:    '#141820',
-          panel2:   '#1a1f2a',
-          accent:   '#4f8cff',
-          accentd:  '#3a72e0',
-          text:     '#e8ecf1',
-          muted:    '#8b92a1',
-          err:      '#ff6b6b',
-          ok:       '#4ade80',
-          hairline: 'rgba(255,255,255,0.06)',
-        },
-        fontFamily: {
-          sans: ['system-ui', '-apple-system', '"Segoe UI"', 'Roboto', 'sans-serif'],
-          mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
-        },
-        borderRadius: { panel: '8px', btn: '6px' },
-        transitionDuration: { fast: '120ms' },
-      },
-    },
-  };
-
-// ===== Next Script Block =====
-
+<!-- =========================================================================
+     Script
+     ========================================================================= -->
+<script type="module">
 'use strict';
 	// Configure marked with syntax highlighting
 	if (window.marked && window.hljs) {
@@ -9900,3 +9849,4 @@ try { CodeSmith.ui.wire(); } catch(e) { console.error('wire FAILED:', e); }
       'font:13px system-ui;z-index:80;">Failed to initialize. See console.</div>');
   }
 })();
+</script>
