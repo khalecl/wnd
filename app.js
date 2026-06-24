@@ -1,6 +1,3 @@
-<!-- =========================================================================
-     Script
-     ========================================================================= -->
 <script type="module">
 'use strict';
 	// Configure marked with syntax highlighting
@@ -9849,4 +9846,3 @@ try { CodeSmith.ui.wire(); } catch(e) { console.error('wire FAILED:', e); }
       'font:13px system-ui;z-index:80;">Failed to initialize. See console.</div>');
   }
 })();
-</script>
