@@ -3630,12 +3630,12 @@ CodeSmith.explorer = Explorer;
 			    const docsSection = docsContext ? `\n\nREFERENCE DOCS (use latest APIs from these):\n${docsContext.slice(0, 6000)}` : '';
 					 // Smart routing
 						const userModelChoice = document.getElementById('explorer-model-select')?.value || 'auto';
-							let routing;
-							try {
-								routing = CodeSmith.router.route(question, userModelChoice);
-							} catch (e) {
-								routing = { tier: 'orchestrator', temperature: 0.2, maxTokens: 6000, reason: 'router fallback' };
-							}					
+								let routing;
+								try {
+									routing = CodeSmith.router.route(queryText, 'auto');
+								} catch (e) {
+									routing = { tier: 'orchestrator', temperature: 0.2, maxTokens: 6000, reason: 'router fallback' };
+								}
 						// Project context from knowledge graph
 						let projectContext = '';
 						try { projectContext = CodeSmith.knowledge.getProjectContext(); } catch {}
@@ -7566,7 +7566,7 @@ case 'symbols_requested':
   			async function _scRetrySameModel(modId) {
 				if (!modId) return;
 				const skeleton = CodeSmith.stageB.getSkeleton();
-				const mod = skeleton ? skeleton.modules.find(m => m.id === modId) = null;
+					const mod = skeleton ? skeleton.modules.find(m => m.id === modId) : null;
 				if (!mod) { _scLog('Module not found in skeleton', 'log-fail'); return; }
 				_scLog('🔄 Retrying ' + modId + ' with same model…', 'log-warn');
 				const states = CodeSmith.stageC.getModuleStates();
@@ -7600,7 +7600,7 @@ case 'symbols_requested':
 					})) {
 						if (ev.type === 'token') {
 							_scLog('  [retry] ' + ev.delta.slice(0, 60) + (ev.delta.length > 60 ? '…' : ''), 'log-info');
-						} else if ( PARTICLES  === 'done') {
+							} else if (ev.type === 'done') {
 							const workerText = ev.text || '';
 							let workerResult;
 							try {
@@ -8571,7 +8571,7 @@ case 'symbols_requested':
 
 		function _explorerRenderLocalAnalysis(analysis) {
 		  const $ = (sel) => document.querySelector(sel);
-		  const container = $('#explorer-analysis');
+				// container already defined above, don't redeclare
 		  container.replaceChildren();
 
 		  // Metrics section
@@ -8763,9 +8763,8 @@ case 'symbols_requested':
 		      return;
 		    }
 
-			const container = $('#explorer-analysis');
 			// Append AI analysis after local analysis
-			const aiSection = document.createElement('div');
+				const aiSection = document.createElement('div');
 			aiSection.className = 'analysis-section';
 			aiSection.style.borderTop = '2px solid rgba(79,140,255,0.2)';
 
@@ -9845,3 +9844,4 @@ try { CodeSmith.ui.wire(); } catch(e) { console.error('wire FAILED:', e); }
       'font:13px system-ui;z-index:80;">Failed to initialize. See console.</div>');
   }
 })();
+</script>
