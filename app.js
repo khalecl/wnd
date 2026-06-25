@@ -1,4 +1,3 @@
-<script type="module">
 'use strict';
 	// Configure marked with syntax highlighting
 	if (window.marked && window.hljs) {
