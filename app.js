@@ -1,3 +1,58 @@
+mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });
+
+// ===== Next Script Block =====
+
+var require = { paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } };
+
+// ===== Next Script Block =====
+
+require(['vs/editor/editor.main'], function() {
+    window._monacoReady = true;
+    // Load xterm AFTER Monaco owns the AMD loader
+	var _amdDefine = window.define;
+	    window.define = undefined;
+	    var s1 = document.createElement('script');
+	    s1.src = 'https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js';
+	    s1.onload = function() {
+	      var s2 = document.createElement('script');
+	      s2.src = 'https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js';
+	      s2.onload = function() { window.define = _amdDefine; };
+	      document.head.appendChild(s2);
+	    };
+	    document.head.appendChild(s1);
+  });
+
+// ===== Next Script Block =====
+
+// Tailwind config must be set before the runtime script renders anything.
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          bg:       '#0b0d10',
+          panel:    '#141820',
+          panel2:   '#1a1f2a',
+          accent:   '#4f8cff',
+          accentd:  '#3a72e0',
+          text:     '#e8ecf1',
+          muted:    '#8b92a1',
+          err:      '#ff6b6b',
+          ok:       '#4ade80',
+          hairline: 'rgba(255,255,255,0.06)',
+        },
+        fontFamily: {
+          sans: ['system-ui', '-apple-system', '"Segoe UI"', 'Roboto', 'sans-serif'],
+          mono: ['"JetBrains Mono"', '"Fira Code"', 'ui-monospace', 'monospace'],
+        },
+        borderRadius: { panel: '8px', btn: '6px' },
+        transitionDuration: { fast: '120ms' },
+      },
+    },
+  };
+
+// ===== Next Script Block =====
+
 'use strict';
 	// Configure marked with syntax highlighting
 	if (window.marked && window.hljs) {
@@ -3630,12 +3685,12 @@ CodeSmith.explorer = Explorer;
 			    const docsSection = docsContext ? `\n\nREFERENCE DOCS (use latest APIs from these):\n${docsContext.slice(0, 6000)}` : '';
 					 // Smart routing
 						const userModelChoice = document.getElementById('explorer-model-select')?.value || 'auto';
-								let routing;
-								try {
-									routing = CodeSmith.router.route(queryText, 'auto');
-								} catch (e) {
-									routing = { tier: 'orchestrator', temperature: 0.2, maxTokens: 6000, reason: 'router fallback' };
-								}
+							let routing;
+							try {
+								routing = CodeSmith.router.route(question, userModelChoice);
+							} catch (e) {
+								routing = { tier: 'orchestrator', temperature: 0.2, maxTokens: 6000, reason: 'router fallback' };
+							}					
 						// Project context from knowledge graph
 						let projectContext = '';
 						try { projectContext = CodeSmith.knowledge.getProjectContext(); } catch {}
@@ -7566,7 +7621,7 @@ case 'symbols_requested':
   			async function _scRetrySameModel(modId) {
 				if (!modId) return;
 				const skeleton = CodeSmith.stageB.getSkeleton();
-					const mod = skeleton ? skeleton.modules.find(m => m.id === modId) : null;
+				const mod = skeleton ? skeleton.modules.find(m => m.id === modId) : null;
 				if (!mod) { _scLog('Module not found in skeleton', 'log-fail'); return; }
 				_scLog('🔄 Retrying ' + modId + ' with same model…', 'log-warn');
 				const states = CodeSmith.stageC.getModuleStates();
@@ -7600,7 +7655,7 @@ case 'symbols_requested':
 					})) {
 						if (ev.type === 'token') {
 							_scLog('  [retry] ' + ev.delta.slice(0, 60) + (ev.delta.length > 60 ? '…' : ''), 'log-info');
-							} else if (ev.type === 'done') {
+						} else if (ev.type === 'done') {
 							const workerText = ev.text || '';
 							let workerResult;
 							try {
@@ -8571,7 +8626,7 @@ case 'symbols_requested':
 
 		function _explorerRenderLocalAnalysis(analysis) {
 		  const $ = (sel) => document.querySelector(sel);
-				// container already defined above, don't redeclare
+		  const container = $('#explorer-analysis');
 		  container.replaceChildren();
 
 		  // Metrics section
@@ -8763,8 +8818,9 @@ case 'symbols_requested':
 		      return;
 		    }
 
+			const container = $('#explorer-analysis');
 			// Append AI analysis after local analysis
-				const aiSection = document.createElement('div');
+			const aiSection = document.createElement('div');
 			aiSection.className = 'analysis-section';
 			aiSection.style.borderTop = '2px solid rgba(79,140,255,0.2)';
 
